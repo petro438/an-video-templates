@@ -42,6 +42,9 @@ import { execSync } from "child_process";
 // Load schema durations so we never request more frames than a composition has
 const { SCHEMAS } = await import("../src/lib/schemas.js");
 const MAX_FRAMES = Object.fromEntries(SCHEMAS.map((s) => [s.id, s.dur]));
+const TEMPLATE_ID = Object.fromEntries(
+  SCHEMAS.map((s) => [s.id, (s.name.match(/^T\d+/) ?? [s.id])[0]])
+);
 
 // Args: <blueprint.json> [--beat <id>] [--shot <index>]
 const args = process.argv.slice(2);
@@ -72,10 +75,11 @@ for (const beat of blueprint.beats) {
   for (let i = 0; i < beat.shots.length; i++) {
     const shot = beat.shots[i];
     if (onlyShot !== null && i !== onlyShot) continue;
-    if (!shot.template || !shot.compositionId) continue;
+    if (!shot.compositionId) continue;
 
-    const outFile = `out/beat-${beat.id}-shot-${i}-${shot.template}.mp4`;
-    console.log(`  ▸ Beat ${beat.id}, Shot ${i}: ${shot.template} → ${outFile}`);
+    const templateLabel = shot.template ?? TEMPLATE_ID[shot.compositionId] ?? shot.compositionId;
+    const outFile = `out/beat-${beat.id}-shot-${i}-${templateLabel}.mp4`;
+    console.log(`  ▸ Beat ${beat.id}, Shot ${i}: ${templateLabel} (${shot.compositionId}) → ${outFile}`);
 
     // Write props to a temp file to avoid shell escaping issues
     // (apostrophes in text data break single-quoted shell args)
