@@ -121,7 +121,11 @@ if (inputUrl) {
     );
     process.exit(1);
   }
-  content = readFileSync(resolvedPath, "utf-8");
+  if (resolvedPath.toLowerCase().endsWith(".pdf")) {
+    content = { type: "pdf", data: readFileSync(resolvedPath).toString("base64") };
+  } else {
+    content = readFileSync(resolvedPath, "utf-8");
+  }
 } else if (!process.stdin.isTTY) {
   content = readFileSync("/dev/stdin", "utf-8");
 } else {
@@ -133,7 +137,9 @@ if (inputUrl) {
   process.exit(1);
 }
 
-if (!content.trim()) { console.error("Error: input is empty."); process.exit(1); }
+if (typeof content === "string" && !content.trim()) {
+  console.error("Error: input is empty."); process.exit(1);
+}
 
 // ── Template reference ────────────────────────────────────────────────────────
 
@@ -271,7 +277,12 @@ const message = await client.messages.create({
   messages: [
     {
       role: "user",
-      content: `Here is the source material. Generate a complete video blueprint JSON.\n\n---\n\n${content}`,
+      content: typeof content === "string"
+        ? `Here is the source material. Generate a complete video blueprint JSON.\n\n---\n\n${content}`
+        : [
+            { type: "document", source: { type: "base64", media_type: "application/pdf", data: content.data } },
+            { type: "text", text: "Here is the source material (PDF). Generate a complete video blueprint JSON." },
+          ],
     },
   ],
 });
