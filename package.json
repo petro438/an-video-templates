@@ -1,0 +1,33 @@
+{
+  "type": "module",
+  "name": "an-video-templates",
+  "version": "2.0.0",
+  "description": "Action Network Video Template Library — Remotion-based motion graphics pipeline",
+  "scripts": {
+    "dev": "npx remotion studio",
+    "builder": "vite --config builder/vite.config.mjs --port 3001",
+    "builder:build": "vite build --config builder/vite.config.mjs --outDir ../dist-builder",
+    "render:all": "node scripts/render-all.mjs",
+    "render:blueprint": "node scripts/render-blueprint.mjs",
+    "generate": "node scripts/generate-blueprint.mjs",
+    "generate:url": "node scripts/generate-blueprint.mjs --url",
+    "render-server": "node scripts/render-server.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@remotion/bundler": "4.0.424",
+    "@remotion/cli": "4.0.424",
+    "@remotion/google-fonts": "4.0.424",
+    "@remotion/renderer": "4.0.424",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remotion": "4.0.424",
+    "zod": "^3.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.4.0"
+  }
+}
