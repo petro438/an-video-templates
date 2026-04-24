@@ -119,60 +119,72 @@ export interface OddsCardProps {
   teamB: { name: string; odds: string; role?: string; color?: string };
   draw?: { odds: string };
   variant?: "two-way" | "three-way";
+  speed?: number;
 }
 export interface BigNumberProps {
   number: string; suffix?: string; label: string; sublabel?: string;
   color?: string; countUp?: boolean;
+  speed?: number;
 }
 export interface QuoteCardProps {
   quote: string; attribution: string; role?: string;
   variant?: "standard" | "dramatic";
+  speed?: number;
 }
 export interface LowerThirdProps {
   primary: string; secondary?: string; accentColor?: string;
   position?: "left" | "right";
+  speed?: number;
 }
 export interface StatComparisonProps {
   entityA: { name: string; color?: string };
   entityB: { name: string; color?: string };
   stats: Array<{ label: string; valueA: number; valueB: number; suffix?: string }>;
+  speed?: number;
 }
 export interface ScoreboardProps {
   teamA: { name: string; score: number };
   teamB: { name: string; score: number };
   event?: string; date?: string; badge?: string;
+  speed?: number;
 }
 export interface ProbabilityVizProps {
   percentage: number; label: string; sublabel?: string;
   variant?: "donut" | "icon-grid"; color?: string;
+  speed?: number;
 }
 export interface StandingsTableProps {
   title: string; columns: string[];
   rows: Array<{ rank?: number; name: string; values: string[]; highlight?: boolean }>;
   highlightColor?: string;
+  speed?: number;
 }
 export interface TimelineProps {
   title: string;
   points: Array<{ label: string; value: number; annotation?: string }>;
   yLabel?: string; color?: string;
+  speed?: number;
 }
 export interface PhotoStatProps {
   headline?: string;
   stats: Array<{ label: string; value: string }>;
   photoSide?: "left" | "right";
   accentColor?: string;
+  speed?: number;
 }
 export interface ExplainerProps {
   title: string;
   steps: string[];
   formula?: string;
   accentColor?: string;
+  speed?: number;
 }
 export interface ComparableProps {
   subjectA: { name: string; detail: string; stat: string };
   subjectB: { name: string; detail: string; stat: string };
   connector?: string;
   negated?: boolean;
+  speed?: number;
 }
 export interface HeatMapProps {
   title?: string;
@@ -182,6 +194,7 @@ export interface HeatMapProps {
   colorLow?: string;
   colorHigh?: string;
   showValues?: boolean;
+  speed?: number;
 }
 export interface ScatterPlotProps {
   title?: string;
@@ -189,11 +202,57 @@ export interface ScatterPlotProps {
   yLabel?: string;
   points: Array<{ label: string; x: number; y: number; color?: string }>;
   quadrants?: { topLeft?: string; topRight?: string; bottomLeft?: string; bottomRight?: string };
+  speed?: number;
 }
 export interface FlexTableProps {
   title?: string;
   columns: Array<{ header: string; align?: "left" | "center" | "right" }>;
-  rows: Array<{ cells: string[]; highlight?: boolean }>;
+  rows: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
   highlightColor?: string;
   showRank?: boolean;
+  speed?: number;
+}
+export interface SeasonScheduleProps {
+  title?: string;
+  team?: string;
+  games: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
+  accentColor?: string;
+  speed?: number;
+}
+export interface GameFlashProps {
+  title?: string;
+  games: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
+  framesPerGame?: number;
+  accentColor?: string;
+  speed?: number;
+}
+export interface RetroTVProps {
+  screenColor?: string;
+  caption?: string;
+  channel?: string;
+  showStatic?: boolean;
+  showScanlines?: boolean;
+  frameColor?: string;
+  speed?: number;
+}
+export interface DotStripProps {
+  title?: string;
+  items: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
+  sort?: "descending" | "ascending" | "none";
+  showLabels?: boolean;
+  showValues?: boolean;
+  dotColor?: string;
+  accentColor?: string;
+  speed?: number;
+}
+export interface ListScannerProps {
+  title?: string;
+  items: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
+  display?: "list" | "dots";
+  showRank?: boolean;
+  showLabels?: boolean;
+  direction?: "down" | "up";
+  dotColor?: string;
+  accentColor?: string;
+  speed?: number;
 }

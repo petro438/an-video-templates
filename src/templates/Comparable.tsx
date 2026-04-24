@@ -20,9 +20,9 @@ export const schema: TemplateSchema = {
 };
 
 const ComparableSide: React.FC<{
-  name: string; detail: string; stat: string; delay: number; negated: boolean;
-}> = ({ name, detail, stat, delay, negated }) => {
-  const frame = useCurrentFrame();
+  name: string; detail: string; stat: string; delay: number; negated: boolean; speed?: number;
+}> = ({ name, detail, stat, delay, negated, speed }) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const enter = spring({ frame: frame - delay, fps, config: anim.springSnappy, durationInFrames: 15 });
   const op = interpolate(enter, [0, 1], [0, 1]);
@@ -65,9 +65,9 @@ const ComparableSide: React.FC<{
 };
 
 export const Comparable: React.FC<ComparableProps> = ({
-  subjectA, subjectB, connector = "IS COMPARABLE TO", negated = false,
+  subjectA, subjectB, connector = "IS COMPARABLE TO", negated = false, speed,
 }) => {
-  const frame = useCurrentFrame();
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const connEnter = spring({ frame: frame - 12, fps, config: anim.springSmooth, durationInFrames: 12 });
@@ -82,7 +82,7 @@ export const Comparable: React.FC<ComparableProps> = ({
       <div style={{ position: "absolute", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)", width: 1560 }}>
         <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
-          <ComparableSide {...subjectA} delay={5} negated={false} />
+          <ComparableSide {...subjectA} delay={5} negated={false} speed={speed} />
 
           {/* Connector */}
           <div style={{
@@ -106,7 +106,7 @@ export const Comparable: React.FC<ComparableProps> = ({
             )}
           </div>
 
-          <ComparableSide {...subjectB} delay={10} negated={false} />
+          <ComparableSide {...subjectB} delay={10} negated={false} speed={speed} />
         </div>
       </div>
 

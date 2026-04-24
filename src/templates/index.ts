@@ -19,6 +19,11 @@ export { LowerThird, schema as LowerThirdSchema } from "./LowerThird";
 export { HeatMap, schema as HeatMapSchema } from "./HeatMap";
 export { ScatterPlot, schema as ScatterPlotSchema } from "./ScatterPlot";
 export { FlexTable, schema as FlexTableSchema } from "./FlexTable";
+export { SeasonSchedule, schema as SeasonScheduleSchema } from "./SeasonSchedule";
+export { GameFlash, schema as GameFlashSchema } from "./GameFlash";
+export { ListScanner, schema as ListScannerSchema } from "./ListScanner";
+export { DotStrip, schema as DotStripSchema } from "./DotStrip";
+export { RetroTV, schema as RetroTVSchema } from "./RetroTV";
 
 import { schema as s1 } from "./OddsCard";
 import { schema as s2 } from "./StatComparison";
@@ -35,8 +40,13 @@ import { schema as s12 } from "./LowerThird";
 import { schema as s13 } from "./HeatMap";
 import { schema as s14 } from "./ScatterPlot";
 import { schema as s15 } from "./FlexTable";
+import { schema as s16 } from "./SeasonSchedule";
+import { schema as s17 } from "./GameFlash";
+import { schema as s18 } from "./ListScanner";
+import { schema as s19 } from "./DotStrip";
+import { schema as s20 } from "./RetroTV";
 
-export const ALL_SCHEMAS = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15];
+export const ALL_SCHEMAS = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20];
 
 export const SCHEMA_MAP: Record<string, typeof s1> = Object.fromEntries(
   ALL_SCHEMAS.map(s => [s.id, s])

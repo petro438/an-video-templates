@@ -16,9 +16,8 @@ export const schema: TemplateSchema = {
 };
 
 export const LowerThird: React.FC<LowerThirdProps> = ({
-  primary, secondary, accentColor = colors.yellow, position = "left",
-}) => {
-  const frame = useCurrentFrame();
+  primary, secondary, accentColor = colors.yellow, position = "left", speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps, durationInFrames } = useVideoConfig();
 
   // Enter

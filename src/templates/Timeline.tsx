@@ -21,9 +21,8 @@ export const schema: TemplateSchema = {
 };
 
 export const Timeline: React.FC<TimelineProps> = ({
-  title, points, yLabel, color = colors.yellow,
-}) => {
-  const frame = useCurrentFrame();
+  title, points, yLabel, color = colors.yellow, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });

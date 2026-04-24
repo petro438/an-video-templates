@@ -16,9 +16,8 @@ export const schema: TemplateSchema = {
 };
 
 export const QuoteCard: React.FC<QuoteCardProps> = ({
-  quote, attribution, role, variant = "standard",
-}) => {
-  const frame = useCurrentFrame();
+  quote, attribution, role, variant = "standard", speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const markEnter = spring({ frame, fps, config: anim.springSmooth, durationInFrames: 15 });

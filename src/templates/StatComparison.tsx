@@ -20,9 +20,9 @@ export const schema: TemplateSchema = {
 };
 
 const Bar: React.FC<{
-  label: string; valueA: number; valueB: number; suffix?: string; index: number;
-}> = ({ label, valueA, valueB, suffix = "", index }) => {
-  const frame = useCurrentFrame();
+  label: string; valueA: number; valueB: number; suffix?: string; index: number; speed?: number;
+}> = ({ label, valueA, valueB, suffix = "", index, speed }) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const delay = 10 + index * 6;
   const enter = spring({ frame: frame - delay, fps, config: anim.springSmooth, durationInFrames: 18 });
@@ -62,8 +62,8 @@ const Bar: React.FC<{
   );
 };
 
-export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB, stats }) => {
-  const frame = useCurrentFrame();
+export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB, stats, speed }) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const hdrEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
   const hdrOp = interpolate(hdrEnter, [0, 1], [0, 1]);
@@ -87,7 +87,7 @@ export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB
         </div>
         {/* Yellow dividing rule — expands full width */}
         <div style={{ height: 4, background: colors.yellow, marginBottom: 32, width: `${ruleW}%` }} />
-        {stats.map((s, i) => <Bar key={i} label={s.label} valueA={s.valueA} valueB={s.valueB} suffix={s.suffix} index={i} />)}
+        {stats.map((s, i) => <Bar key={i} label={s.label} valueA={s.valueA} valueB={s.valueB} suffix={s.suffix} index={i} speed={speed} />)}
       </div>
       <div style={styles.watermark}>ACTION</div>
     </AbsoluteFill>

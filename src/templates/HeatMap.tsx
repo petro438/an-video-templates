@@ -35,16 +35,19 @@ function lerpColor(lowHex: string, highHex: string, t: number) {
 }
 
 export const HeatMap: React.FC<HeatMapProps> = ({
-  title, xLabels, yLabels, data, colorLow = colors.surface3, colorHigh = colors.yellow, showValues = true,
-}) => {
-  const frame = useCurrentFrame();
+  title, xLabels, yLabels, data, colorLow = colors.surface3, colorHigh = colors.yellow, showValues = true, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
   const titleOp = interpolate(titleEnter, [0, 1], [0, 1]);
 
+  const parsedData: number[][] = typeof data === "string"
+    ? (data as string).trim().split("\n").map((row: string) => row.split(/[,\t]+/).map(Number))
+    : (data || []);
+
   // Flatten to find min/max
-  const flat = (data || []).flat().filter(v => typeof v === "number");
+  const flat = parsedData.flat().filter(v => typeof v === "number" && !isNaN(v));
   const minV = Math.min(...flat);
   const maxV = Math.max(...flat);
   const range = maxV - minV || 1;
@@ -108,7 +111,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({
             </div>
 
             {/* Grid */}
-            {(data || []).map((row, ri) => (
+            {parsedData.map((row, ri) => (
               <div key={ri} style={{ display: "flex" }}>
                 {(Array.isArray(row) ? row : []).map((val, ci) => {
                   const cellDelay = 8 + ri * 4 + ci * 2;

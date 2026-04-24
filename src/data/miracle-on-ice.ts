@@ -159,3 +159,76 @@ export const miracleFlexTable = {
   highlightColor: colors.green,
   showRank: true,
 };
+// T16 — Season Schedule: USA 1980 Olympic results
+export const miracleSeasonSchedule = {
+  title: "1980 Winter Olympics",
+  team: "Team USA Hockey",
+  games: [
+    { name: "Game 1", values: ["vs Sweden", "T 2-2"], highlight: false },
+    { name: "Game 2", values: ["vs Czechoslovakia", "W 7-3"], highlight: false },
+    { name: "Game 3", values: ["vs Norway", "W 5-1"], highlight: false },
+    { name: "Game 4", values: ["vs Romania", "W 7-2"], highlight: false },
+    { name: "Game 5", values: ["vs W. Germany", "W 4-2"], highlight: false },
+    { name: "Game 6", values: ["vs USSR", "W 4-3"], highlight: true },
+    { name: "Game 7", values: ["vs Finland", "W 4-2"], highlight: false },
+  ],
+  accentColor: colors.green,
+};
+// T17 — Game Flash: same USA games, one at a time
+export const miracleGameFlash = {
+  title: "Road to Gold — 1980 USA Hockey",
+  games: [
+    { name: "Game 1", values: ["vs Sweden", "T 2-2"], highlight: false },
+    { name: "Game 2", values: ["vs Czechoslovakia", "W 7-3"], highlight: false },
+    { name: "Game 3", values: ["vs Norway", "W 5-1"], highlight: false },
+    { name: "Game 4", values: ["vs Romania", "W 7-2"], highlight: false },
+    { name: "Game 5", values: ["vs W. Germany", "W 4-2"], highlight: false },
+    { name: "Game 6", values: ["vs USSR", "W 4-3"], highlight: false },
+    { name: "Game 7", values: ["vs Finland", "W 4-2"], highlight: false },
+  ],
+  framesPerGame: 36,
+  accentColor: colors.green,
+};
+// T18 — List Scanner: 1980 Olympics hockey final standings
+export const miracleListScanner = {
+  title: "1980 Winter Olympics — Final Standings",
+  items: [
+    { name: "USA", values: ["Gold"], highlight: true },
+    { name: "USSR", values: ["Silver"], highlight: false },
+    { name: "Sweden", values: ["Bronze"], highlight: false },
+    { name: "Finland", values: ["4th"], highlight: false },
+    { name: "Czechoslovakia", values: ["5th"], highlight: false },
+    { name: "Canada", values: ["6th"], highlight: false },
+    { name: "Poland", values: ["7th"], highlight: false },
+    { name: "Romania", values: ["8th"], highlight: false },
+    { name: "Netherlands", values: ["9th"], highlight: false },
+    { name: "W. Germany", values: ["10th"], highlight: false },
+    { name: "Norway", values: ["11th"], highlight: false },
+    { name: "Japan", values: ["12th"], highlight: false },
+  ],
+  direction: "down" as const,
+  accentColor: colors.green,
+};
+// T19 — Dot Strip: goals scored per team in 1980 Olympics
+export const miracleDotStrip = {
+  title: "1980 Winter Olympics — Goals Scored",
+  items: [
+    { name: "USSR", values: ["51"], highlight: false },
+    { name: "Czechoslovakia", values: ["40"], highlight: false },
+    { name: "USA", values: ["29"], highlight: true },
+    { name: "Canada", values: ["28"], highlight: false },
+    { name: "Sweden", values: ["26"], highlight: false },
+    { name: "Finland", values: ["26"], highlight: false },
+    { name: "Poland", values: ["15"], highlight: false },
+    { name: "Romania", values: ["13"], highlight: false },
+    { name: "W. Germany", values: ["21"], highlight: false },
+    { name: "Netherlands", values: ["10"], highlight: false },
+    { name: "Norway", values: ["14"], highlight: false },
+    { name: "Japan", values: ["7"], highlight: false },
+  ],
+  sort: "descending" as const,
+  showLabels: true,
+  showValues: true,
+  dotColor: colors.red,
+  accentColor: colors.green,
+};

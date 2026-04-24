@@ -18,9 +18,12 @@ export const schema: TemplateSchema = {
   ],
 };
 
-export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, rows, highlightColor = colors.yellow }) => {
-  const frame = useCurrentFrame();
+export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, rows, highlightColor = colors.yellow, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
+
+  if (!columns || !rows || columns.length === 0 || rows.length === 0) return <AbsoluteFill style={styles.darkBg} />;
+
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
   const titleOp = interpolate(titleEnter, [0, 1], [0, 1]);
   const nameW = 480, dataW = 180, rankW = 90;
@@ -72,7 +75,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, 
                 <div style={{ width: nameW, fontSize: 30,
                   fontFamily: f.body, color: hl ? colors.text1 : colors.text2,
                   fontWeight: hl ? 700 : 400, letterSpacing: "0.02em" }}>{row.name}</div>
-                {row.values.map((v, j) => (
+                {(row.values || []).map((v, j) => (
                   <div key={j} style={{ width: dataW, textAlign: "center", fontSize: 40,
                     fontFamily: f.stats, color: hl ? colors.text1 : colors.text3 }}>{v}</div>
                 ))}

@@ -19,9 +19,8 @@ export const schema: TemplateSchema = {
 };
 
 export const PhotoStat: React.FC<PhotoStatProps> = ({
-  headline, stats, photoSide = "left", accentColor = colors.yellow,
-}) => {
-  const frame = useCurrentFrame();
+  headline, stats, photoSide = "left", accentColor = colors.yellow, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const panelEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 18 });

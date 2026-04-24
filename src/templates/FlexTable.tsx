@@ -28,9 +28,8 @@ export const schema: TemplateSchema = {
 };
 
 export const FlexTable: React.FC<FlexTableProps> = ({
-  title, columns, rows, highlightColor = colors.yellow, showRank = false,
-}) => {
-  const frame = useCurrentFrame();
+  title, columns, rows, highlightColor = colors.yellow, showRank = false, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
@@ -38,10 +37,14 @@ export const FlexTable: React.FC<FlexTableProps> = ({
 
   if (!columns || columns.length === 0) return <AbsoluteFill style={styles.darkBg} />;
 
+  const normalizedCols: Array<{ header: string; align: "left" | "center" | "right" }> = columns.map((col: any, i: number) =>
+    typeof col === "string" ? { header: col, align: i === 0 ? "left" as const : "right" as const } : col
+  );
+
   // Auto-size columns to fit within 1600px
   const rankW = showRank ? 70 : 0;
   const available = 1640 - rankW;
-  const colW = Math.floor(available / columns.length);
+  const colW = Math.floor(available / normalizedCols.length);
 
   // Font sizes based on row count — shrink for many rows
   const rowCount = rows?.length || 1;
@@ -55,7 +58,7 @@ export const FlexTable: React.FC<FlexTableProps> = ({
     <AbsoluteFill style={styles.darkBg}>
       <Scanlines />
       <div style={{ position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)", width: Math.min(rankW + columns.length * colW, 1720) }}>
+        transform: "translate(-50%, -50%)", width: Math.min(rankW + normalizedCols.length * colW, 1720) }}>
 
         {/* Title */}
         {title && (
@@ -73,13 +76,13 @@ export const FlexTable: React.FC<FlexTableProps> = ({
             <div style={{ width: rankW, fontSize: 13, fontFamily: f.mono,
               color: colors.text3, textTransform: "uppercase", letterSpacing: "0.14em" }}>#</div>
           )}
-          {columns.map((col, i) => (
+          {normalizedCols.map((col, i) => (
             <div key={i} style={{
               width: colW,
               textAlign: alignMap[col.align || "left"],
               fontSize: 13, fontFamily: f.mono, color: colors.text3,
               textTransform: "uppercase", letterSpacing: "0.14em",
-              paddingRight: i < columns.length - 1 ? 12 : 0,
+              paddingRight: i < normalizedCols.length - 1 ? 12 : 0,
             }}>{col.header}</div>
           ))}
         </div>
@@ -91,6 +94,7 @@ export const FlexTable: React.FC<FlexTableProps> = ({
           const rOp = interpolate(re, [0, 1], [0, 1]);
           const rSlide = interpolate(re, [0, 1], [-28, 0]);
           const hl = row.highlight;
+          const cells = row.cells ?? [row.name, ...(row.values || [])];
 
           return (
             <div key={i} style={{
@@ -105,8 +109,8 @@ export const FlexTable: React.FC<FlexTableProps> = ({
                 <div style={{ width: rankW, fontSize: numFontSize, fontFamily: f.stats,
                   color: hl ? highlightColor : colors.text3 }}>{i + 1}</div>
               )}
-              {(row.cells || []).map((cell, j) => {
-                const col = columns[j];
+              {(cells || []).map((cell, j) => {
+                const col = normalizedCols[j];
                 const isFirst = j === 0;
                 const align = col ? alignMap[col.align || "left"] : "left";
                 return (
@@ -118,7 +122,7 @@ export const FlexTable: React.FC<FlexTableProps> = ({
                     fontWeight: isFirst && hl ? 700 : 400,
                     color: hl ? (isFirst ? colors.text1 : colors.white) : (isFirst ? colors.text2 : colors.text3),
                     letterSpacing: isFirst ? "0.02em" : "0.01em",
-                    paddingRight: j < columns.length - 1 ? 12 : 0,
+                    paddingRight: j < normalizedCols.length - 1 ? 12 : 0,
                   }}>{cell}</div>
                 );
               })}

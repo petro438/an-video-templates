@@ -5,6 +5,7 @@ import {
   OddsCard, StatComparison, BigNumber, Timeline, QuoteCard,
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
+  SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
 } from "@templates/index";
 
 // ═══════════════════════════════════════════════
@@ -156,6 +157,33 @@ function PastePoints({value:rows,onChange:oc}){
 }
 
 // ═══════════════════════════════════════════════
+// ERROR BOUNDARY — catches crashes inside Remotion Player
+// ═══════════════════════════════════════════════
+class PreviewErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidUpdate(prev) {
+    if (this.state.error && prev.resetKey !== this.props.resetKey) {
+      this.setState({ error: null });
+    }
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{width:"100%",height:"100%",background:"#1a1a1a",display:"flex",flexDirection:"column",
+          alignItems:"center",justifyContent:"center",gap:12,color:"#999",fontFamily:"monospace",fontSize:13}}>
+          <div style={{color:"#E82020"}}>Preview crashed</div>
+          <div style={{maxWidth:500,textAlign:"center",fontSize:11,color:"#666"}}>{this.state.error.message}</div>
+          <button onClick={()=>this.setState({error:null})}
+            style={{marginTop:8,padding:"6px 16px",background:"#333",color:"#ccc",border:"1px solid #555",
+              borderRadius:6,cursor:"pointer",fontSize:12}}>Retry</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // LIVE PREVIEW — uses actual @remotion/player
 // ═══════════════════════════════════════════════
 const PW = 652, PH = 367; // display size (1920×1080 scaled ~34%)
@@ -164,10 +192,40 @@ const COMPS = {
   OddsCard, StatComparison, BigNumber, Timeline, QuoteCard,
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
+  SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
 };
 
+class InnerErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidUpdate(prev) {
+    if (this.state.error && prev.resetKey !== this.props.resetKey) {
+      this.setState({ error: null });
+    }
+  }
+  render() {
+    if (this.state.error) return null;
+    return this.props.children;
+  }
+}
+
+const SAFE_COMPS = {};
+for (const [name, Comp] of Object.entries(COMPS)) {
+  SAFE_COMPS[name] = React.forwardRef(function SafeWrap(props, ref) {
+    return React.createElement(InnerErrorBoundary, { resetKey: JSON.stringify(props) },
+      React.createElement(Comp, { ...props, ref }));
+  });
+}
+
+function useDebounce(value, ms) {
+  const [d, setD] = useState(value);
+  useEffect(() => { const t = setTimeout(() => setD(value), ms); return () => clearTimeout(t); }, [value, ms]);
+  return d;
+}
+
 function LivePreview({ id, p, dur }) {
-  const Comp = COMPS[id];
+  const Comp = SAFE_COMPS[id];
+  const debouncedProps = useDebounce(p, 200);
   if (!Comp) {
     return (
       <div style={{width:PW,height:PH,background:C.s2,borderRadius:10,border:`1px solid ${C.brd}`,
@@ -177,21 +235,25 @@ function LivePreview({ id, p, dur }) {
     );
   }
 
+  const resetKey = id + "|" + JSON.stringify(debouncedProps);
+
   return (
     <div style={{width:PW,height:PH,borderRadius:10,overflow:"hidden",border:`1px solid ${C.brd}`}}>
-      <Player
-        component={Comp}
-        inputProps={p}
-        durationInFrames={Math.max(1, dur || 150)}
-        fps={30}
-        compositionWidth={1920}
-        compositionHeight={1080}
-        style={{width:"100%",height:"100%"}}
-        controls
-        loop
-        autoPlay
-        clickToPlay={false}
-      />
+      <PreviewErrorBoundary resetKey={resetKey}>
+        <Player
+          key={id}
+          component={Comp}
+          inputProps={debouncedProps}
+          durationInFrames={Math.max(1, dur || 150)}
+          fps={30}
+          compositionWidth={1920}
+          compositionHeight={1080}
+          style={{width:"100%",height:"100%"}}
+          controls
+          loop
+          numberOfSharedAudioTags={0}
+        />
+      </PreviewErrorBoundary>
     </div>
   );
 }

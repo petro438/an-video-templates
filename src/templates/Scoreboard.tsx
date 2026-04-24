@@ -18,8 +18,8 @@ export const schema: TemplateSchema = {
   ],
 };
 
-export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, date, badge }) => {
-  const frame = useCurrentFrame();
+export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, date, badge, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const cardEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 15 });
   const cardOp = interpolate(cardEnter, [0, 1], [0, 1]);

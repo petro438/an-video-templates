@@ -17,9 +17,8 @@ export const schema: TemplateSchema = {
 };
 
 export const ProbabilityViz: React.FC<ProbabilityVizProps> = ({
-  percentage, label, sublabel, variant = "donut", color = colors.yellow,
-}) => {
-  const frame = useCurrentFrame();
+  percentage, label, sublabel, variant = "donut", color = colors.yellow, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const enter = spring({ frame, fps, config: anim.springSmooth, durationInFrames: 20 });
   const fillP = spring({ frame: frame - 8, fps, config: { damping: 30, stiffness: 60, mass: 1.5 }, durationInFrames: 30 });

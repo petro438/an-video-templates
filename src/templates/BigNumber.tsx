@@ -18,9 +18,8 @@ export const schema: TemplateSchema = {
 };
 
 export const BigNumber: React.FC<BigNumberProps> = ({
-  number, suffix = "", label, sublabel, color = colors.yellow, countUp = true,
-}) => {
-  const frame = useCurrentFrame();
+  number, suffix = "", label, sublabel, color = colors.yellow, countUp = true, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const numEnter = spring({ frame, fps, config: anim.springBouncy, durationInFrames: 22 });

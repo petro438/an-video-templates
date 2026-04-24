@@ -193,7 +193,7 @@ export const SCHEMAS = [
       { k: "title", l: "Title", t: "text", d: "" },
       { k: "xLabels", l: "Column Labels", t: "text-list", ph: "1-3,4-6,7-9,10+", d: ["1-3", "4-6", "7-9", "10+"] },
       { k: "yLabels", l: "Row Labels", t: "text-list", ph: "1st,2nd,3rd,4th", d: ["1st", "2nd", "3rd", "4th"] },
-      { k: "data", l: "Data (rows of numbers)", t: "textarea", d: [[75,68,52,41],[71,60,48,33],[80,65,55,38],[78,62,50,35]] },
+      { k: "data", l: "Data (rows of numbers, one row per line)", t: "textarea", ph: "75,68,52,41\n71,60,48,33", d: "75,68,52,41\n71,60,48,33\n80,65,55,38\n78,62,50,35" },
       { k: "colorLow", l: "Low Color", t: "color", d: "#1E1E32" },
       { k: "colorHigh", l: "High Color", t: "color", d: "#00c358" },
       { k: "showValues", l: "Show Values", t: "toggle", d: true },
@@ -209,8 +209,13 @@ export const SCHEMAS = [
       { k: "title", l: "Title", t: "text", d: "" },
       { k: "xLabel", l: "X-Axis Label", t: "text", d: "" },
       { k: "yLabel", l: "Y-Axis Label", t: "text", d: "" },
-      { k: "points", l: "Points (label, x, y)", t: "textarea", d: [{ label: "KC", x: 420, y: 4.9 }] },
-      { k: "quadrants", l: "Quadrant Labels", t: "textarea", d: {} },
+      { k: "points", l: "Points (label, x, y)", t: "paste-table", d: [
+        { name: "KC", values: ["420", "4.9"], highlight: false },
+      ]},
+      { k: "quadrants.topLeft", l: "Quadrant: Top-Left", t: "text", ph: "e.g. High Y, Low X", d: "" },
+      { k: "quadrants.topRight", l: "Quadrant: Top-Right", t: "text", ph: "e.g. Elite", d: "" },
+      { k: "quadrants.bottomLeft", l: "Quadrant: Bottom-Left", t: "text", ph: "e.g. Eliminated", d: "" },
+      { k: "quadrants.bottomRight", l: "Quadrant: Bottom-Right", t: "text", ph: "e.g. High X, Low Y", d: "" },
     ],
   },
   {
@@ -221,10 +226,101 @@ export const SCHEMAS = [
     dur: 210,
     fields: [
       { k: "title", l: "Title", t: "text", d: "" },
-      { k: "columns", l: "Columns (header + align)", t: "textarea", d: [{ header: "Player", align: "left" }, { header: "YDS", align: "right" }] },
-      { k: "rows", l: "Rows", t: "paste-table", d: [{ cells: ["Mahomes", "312"], highlight: true }] },
+      { k: "columns", l: "Column Headers", t: "paste-lines", d: ["Player", "YDS"] },
+      { k: "rows", l: "Rows", t: "paste-table", d: [{ name: "Mahomes", values: ["312"], highlight: true }] },
       { k: "highlightColor", l: "Highlight Color", t: "color", d: "#00c358" },
       { k: "showRank", l: "Show Rank", t: "toggle", d: false },
     ],
   },
+  {
+    id: "SeasonSchedule",
+    name: "T16: Season Schedule",
+    icon: "📅",
+    desc: "Season schedule grid showing W/L results in green and red",
+    dur: 240,
+    fields: [
+      { k: "title", l: "Title", t: "text", ph: "2024 NFL Season", d: "" },
+      { k: "team", l: "Team Name", t: "text", ph: "Chiefs", d: "" },
+      { k: "games", l: "Games (week, opponent, score)", t: "paste-table", d: [
+        { name: "WK 1", values: ["vs Ravens", "W 27-20"], highlight: false },
+        { name: "WK 2", values: ["@ Bengals", "L 17-25"], highlight: false },
+      ]},
+      { k: "accentColor", l: "Team Color", t: "color", d: "#00c358" },
+    ],
+  },
+  {
+    id: "GameFlash",
+    name: "T17: Game Flash",
+    icon: "⚡",
+    desc: "Games flash onto screen one at a time — opponent, score, result",
+    dur: 300,
+    fields: [
+      { k: "title", l: "Title", t: "text", ph: "2024 Season Results", d: "" },
+      { k: "games", l: "Games (week, opponent, score)", t: "paste-table", d: [
+        { name: "WK 1", values: ["vs Ravens", "W 27-20"], highlight: false },
+        { name: "WK 2", values: ["@ Bengals", "L 17-25"], highlight: false },
+      ]},
+      { k: "framesPerGame", l: "Frames Per Game", t: "number", d: 30 },
+      { k: "accentColor", l: "Accent Color", t: "color", d: "#00c358" },
+    ],
+  },
+  {
+    id: "ListScanner",
+    name: "T18: List Scanner",
+    icon: "🔍",
+    desc: "Fast-scrolls through a ranked list, slows and pauses on highlighted entry",
+    dur: 240,
+    fields: [
+      { k: "title", l: "Title", t: "text", ph: "NFL Passing Yards Leaders", d: "" },
+      { k: "items", l: "Items", t: "paste-table", d: [
+        { name: "Player 1", values: ["4,500 YDS"], highlight: false },
+        { name: "Player 2", values: ["4,200 YDS"], highlight: true },
+      ]},
+      { k: "display", l: "Display Mode", t: "select", o: ["list", "dots"], d: "list" },
+      { k: "showRank", l: "Show Rank", t: "toggle", d: true },
+      { k: "showLabels", l: "Show Labels", t: "toggle", d: true },
+      { k: "direction", l: "Scroll Direction", t: "select", o: ["down", "up"], d: "down" },
+      { k: "dotColor", l: "Dot Color", t: "color", d: "#E82020" },
+      { k: "accentColor", l: "Accent Color", t: "color", d: "#00c358" },
+    ],
+  },
+  {
+    id: "DotStrip",
+    name: "T19: Dot Strip",
+    icon: "🔴",
+    desc: "Single-stat dot distribution — rows of dots climbing up or down",
+    dur: 240,
+    fields: [
+      { k: "title", l: "Title", t: "text", ph: "Home Runs — 2024 Season", d: "" },
+      { k: "items", l: "Items (name, value)", t: "paste-table", d: [
+        { name: "Ohtani", values: ["54"], highlight: true },
+        { name: "Judge", values: ["58"], highlight: false },
+        { name: "Soto", values: ["41"], highlight: false },
+      ]},
+      { k: "sort", l: "Sort", t: "select", o: ["descending", "ascending", "none"], d: "descending" },
+      { k: "showLabels", l: "Show Labels", t: "toggle", d: true },
+      { k: "showValues", l: "Show Values", t: "toggle", d: true },
+      { k: "dotColor", l: "Dot Color", t: "color", d: "#E82020" },
+      { k: "accentColor", l: "Highlight Color", t: "color", d: "#00c358" },
+    ],
+  },
+  {
+    id: "RetroTV",
+    name: "T20: Retro TV",
+    icon: "📺",
+    desc: "CRT television frame overlay — composite highlights inside the screen",
+    dur: 150,
+    fields: [
+      { k: "screenColor", l: "Screen Fill", t: "color", d: "#00FF00" },
+      { k: "caption", l: "Caption", t: "text", ph: "4th Quarter Highlights", d: "" },
+      { k: "channel", l: "Channel Label", t: "text", ph: "CH 3", d: "" },
+      { k: "showStatic", l: "Power-On Static", t: "toggle", d: true },
+      { k: "showScanlines", l: "Heavy Scanlines", t: "toggle", d: true },
+      { k: "frameColor", l: "TV Frame Color", t: "color", d: "#1A1510" },
+    ],
+  },
 ];
+
+for (const s of SCHEMAS) {
+  s.fields.unshift({ k: "speed", l: "Animation Speed", t: "number", ph: "1 = normal, 0.5 = slow, 2 = fast", d: 1 });
+}

@@ -15,6 +15,11 @@ import { LowerThird } from "./templates/LowerThird";
 import { HeatMap } from "./templates/HeatMap";
 import { ScatterPlot } from "./templates/ScatterPlot";
 import { FlexTable } from "./templates/FlexTable";
+import { SeasonSchedule } from "./templates/SeasonSchedule";
+import { GameFlash } from "./templates/GameFlash";
+import { ListScanner } from "./templates/ListScanner";
+import { DotStrip } from "./templates/DotStrip";
+import { RetroTV } from "./templates/RetroTV";
 import * as d from "./data/miracle-on-ice";
 
 const C = { width: 1920, height: 1080, fps: 30 };
@@ -58,5 +63,15 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="ScatterPlot" component={rc(ScatterPlot)} durationInFrames={240} {...C} defaultProps={d.miracleScatterPlot} />
     {/* T15 */}
     <Composition id="FlexTable" component={rc(FlexTable)} durationInFrames={210} {...C} defaultProps={d.miracleFlexTable} />
+    {/* T16 */}
+    <Composition id="SeasonSchedule" component={rc(SeasonSchedule)} durationInFrames={240} {...C} defaultProps={d.miracleSeasonSchedule} />
+    {/* T17 */}
+    <Composition id="GameFlash" component={rc(GameFlash)} durationInFrames={300} {...C} defaultProps={d.miracleGameFlash} />
+    {/* T18 */}
+    <Composition id="ListScanner" component={rc(ListScanner)} durationInFrames={240} {...C} defaultProps={d.miracleListScanner} />
+    {/* T19 */}
+    <Composition id="DotStrip" component={rc(DotStrip)} durationInFrames={240} {...C} defaultProps={d.miracleDotStrip} />
+    {/* T20 */}
+    <Composition id="RetroTV" component={rc(RetroTV)} durationInFrames={150} {...C} defaultProps={{ screenColor: "#00FF00", channel: "CH 3", showStatic: true, showScanlines: true }} />
   </>
 );

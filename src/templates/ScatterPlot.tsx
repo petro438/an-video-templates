@@ -23,9 +23,8 @@ export const schema: TemplateSchema = {
 };
 
 export const ScatterPlot: React.FC<ScatterPlotProps> = ({
-  title, xLabel, yLabel, points, quadrants,
-}) => {
-  const frame = useCurrentFrame();
+  title, xLabel, yLabel, points, quadrants, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
@@ -33,8 +32,12 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({
 
   if (!points || points.length === 0) return <AbsoluteFill style={styles.darkBg} />;
 
-  const xs = points.map(p => p.x);
-  const ys = points.map(p => p.y);
+  const normalized = points.map((p: any) =>
+    p.x !== undefined ? p : { label: p.name || p.label || "", x: parseFloat(p.values?.[0]) || 0, y: parseFloat(p.values?.[1]) || 0, color: p.color }
+  );
+
+  const xs = normalized.map(p => p.x);
+  const ys = normalized.map(p => p.y);
   const minX = Math.min(...xs), maxX = Math.max(...xs);
   const minY = Math.min(...ys), maxY = Math.max(...ys);
   const padX = (maxX - minX) * 0.15 || 1;
@@ -148,7 +151,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({
         )}
 
         {/* Data points */}
-        {points.map((pt, i) => {
+        {normalized.map((pt, i) => {
           const ptDelay = 10 + i * 4;
           const ptEnter = spring({ frame: frame - ptDelay, fps, config: anim.springBouncy, durationInFrames: 14 });
           const ptScale = interpolate(ptEnter, [0, 1], [0, 1]);

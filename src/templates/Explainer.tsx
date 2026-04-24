@@ -20,9 +20,8 @@ export const schema: TemplateSchema = {
 };
 
 export const Explainer: React.FC<ExplainerProps> = ({
-  title, steps, formula, accentColor = colors.yellow,
-}) => {
-  const frame = useCurrentFrame();
+  title, steps, formula, accentColor = colors.yellow, speed,}) => {
+  const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
   const titleEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
