@@ -21,10 +21,13 @@ export const SCHEMAS = [
       { k: "teamA.odds", l: "A Odds", t: "text", ph: "-180", d: "-180" },
       { k: "teamA.role", l: "A Role", t: "select", o: ["FAVORITE", "UNDERDOG", ""], d: "FAVORITE" },
       { k: "teamA.color", l: "A Color", t: "color", d: "#E82020" },
+      { k: "teamA.logo", l: "A Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
       { k: "teamB.name", l: "Team B", t: "text", ph: "DET", d: "DET" },
       { k: "teamB.odds", l: "B Odds", t: "text", ph: "+155", d: "+155" },
       { k: "teamB.role", l: "B Role", t: "select", o: ["FAVORITE", "UNDERDOG", ""], d: "UNDERDOG" },
       { k: "teamB.color", l: "B Color", t: "color", d: "#00c358" },
+      { k: "teamB.logo", l: "B Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
       { k: "variant", l: "Variant", t: "select", o: ["two-way", "three-way"], d: "two-way" },
       { k: "draw.odds", l: "Draw Odds", t: "text", ph: "+500", d: "", w: { f: "variant", v: "three-way" } },
     ],
@@ -38,8 +41,11 @@ export const SCHEMAS = [
     fields: [
       { k: "entityA.name", l: "Entity A", t: "text", d: "BOS" },
       { k: "entityA.color", l: "A Color", t: "color", d: "#FFFFFF" },
+      { k: "entityA.logo", l: "A Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
       { k: "entityB.name", l: "Entity B", t: "text", d: "MIL" },
       { k: "entityB.color", l: "B Color", t: "color", d: "#FFFFFF" },
+      { k: "entityB.logo", l: "B Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
       { k: "stats", l: "Stats", t: "paste-stats", d: [{ label: "PPG", valueA: 110, valueB: 105, suffix: "" }] },
     ],
   },
@@ -95,6 +101,7 @@ export const SCHEMAS = [
       { k: "columns", l: "Columns", t: "text-list", ph: "W,L,PTS", d: ["W", "L", "PTS"] },
       { k: "rows", l: "Rows", t: "paste-table", d: [{ name: "Team 1", values: ["10", "3", "20"], highlight: true }] },
       { k: "highlightColor", l: "Highlight", t: "color", d: "#00c358" },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
     ],
   },
   {
@@ -106,8 +113,11 @@ export const SCHEMAS = [
     fields: [
       { k: "teamA.name", l: "Team A", t: "text", d: "USA" },
       { k: "teamA.score", l: "A Score", t: "number", d: 0 },
+      { k: "teamA.logo", l: "A Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
       { k: "teamB.name", l: "Team B", t: "text", d: "USSR" },
       { k: "teamB.score", l: "B Score", t: "number", d: 0 },
+      { k: "teamB.logo", l: "B Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
       { k: "event", l: "Event", t: "text", d: "" },
       { k: "date", l: "Date", t: "text", d: "" },
       { k: "badge", l: "Badge", t: "select", o: ["", "UPSET", "FINAL", "EXHIBITION", "OT"], d: "" },
@@ -163,9 +173,12 @@ export const SCHEMAS = [
       { k: "subjectA.name", l: "Subject A", t: "text", d: "" },
       { k: "subjectA.detail", l: "A Detail", t: "text", d: "" },
       { k: "subjectA.stat", l: "A Stat", t: "text", d: "" },
+      { k: "subjectA.logo", l: "A Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
       { k: "subjectB.name", l: "Subject B", t: "text", d: "" },
       { k: "subjectB.detail", l: "B Detail", t: "text", d: "" },
       { k: "subjectB.stat", l: "B Stat", t: "text", d: "" },
+      { k: "subjectB.logo", l: "B Logo URL", t: "text", ph: "https://...", d: "", w: { f: "useLogo", v: true } },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
       { k: "connector", l: "Connector", t: "text", d: "IS COMPARABLE TO" },
       { k: "negated", l: "Negated (NOT)", t: "toggle", d: false },
     ],
@@ -216,6 +229,7 @@ export const SCHEMAS = [
       { k: "quadrants.topRight", l: "Quadrant: Top-Right", t: "text", ph: "e.g. Elite", d: "" },
       { k: "quadrants.bottomLeft", l: "Quadrant: Bottom-Left", t: "text", ph: "e.g. Eliminated", d: "" },
       { k: "quadrants.bottomRight", l: "Quadrant: Bottom-Right", t: "text", ph: "e.g. High X, Low Y", d: "" },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
     ],
   },
   {
@@ -230,6 +244,7 @@ export const SCHEMAS = [
       { k: "rows", l: "Rows", t: "paste-table", d: [{ name: "Mahomes", values: ["312"], highlight: true }] },
       { k: "highlightColor", l: "Highlight Color", t: "color", d: "#00c358" },
       { k: "showRank", l: "Show Rank", t: "toggle", d: false },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
     ],
   },
   {
@@ -245,6 +260,7 @@ export const SCHEMAS = [
         { name: "WK 1", values: ["vs Ravens", "W 27-20"], highlight: false },
         { name: "WK 2", values: ["@ Bengals", "L 17-25"], highlight: false },
       ]},
+      { k: "teamLogo", l: "Team Logo URL", t: "text", ph: "https://...", d: "" },
       { k: "accentColor", l: "Team Color", t: "color", d: "#00c358" },
     ],
   },
@@ -261,6 +277,7 @@ export const SCHEMAS = [
         { name: "WK 2", values: ["@ Bengals", "L 17-25"], highlight: false },
       ]},
       { k: "framesPerGame", l: "Frames Per Game", t: "number", d: 30 },
+      { k: "useLogo", l: "Show Logos", t: "toggle", d: false },
       { k: "accentColor", l: "Accent Color", t: "color", d: "#00c358" },
     ],
   },
@@ -278,9 +295,9 @@ export const SCHEMAS = [
       ]},
       { k: "display", l: "Display Mode", t: "select", o: ["list", "dots"], d: "list" },
       { k: "showRank", l: "Show Rank", t: "toggle", d: true },
-      { k: "showLabels", l: "Show Labels", t: "toggle", d: true },
+      { k: "showLabels", l: "Show Labels", t: "toggle", d: true, w: { f: "display", v: "dots" } },
       { k: "direction", l: "Scroll Direction", t: "select", o: ["down", "up"], d: "down" },
-      { k: "dotColor", l: "Dot Color", t: "color", d: "#E82020" },
+      { k: "dotColor", l: "Dot Color", t: "color", d: "#E82020", w: { f: "display", v: "dots" } },
       { k: "accentColor", l: "Accent Color", t: "color", d: "#00c358" },
     ],
   },
@@ -322,5 +339,5 @@ export const SCHEMAS = [
 ];
 
 for (const s of SCHEMAS) {
-  s.fields.unshift({ k: "speed", l: "Animation Speed", t: "number", ph: "1 = normal, 0.5 = slow, 2 = fast", d: 1 });
+  s.fields.push({ k: "speed", l: "Animation Speed", t: "number", ph: "1 = normal, 0.5 = slow, 2 = fast", d: 1 });
 }

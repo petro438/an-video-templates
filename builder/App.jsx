@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import ReactDOM from "react-dom";
 import { SCHEMAS as S } from "../src/lib/schemas.js";
 import { Player } from "@remotion/player";
+import TEAMS from "../src/lib/teams.json";
 import {
   OddsCard, StatComparison, BigNumber, Timeline, QuoteCard,
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
@@ -157,6 +159,79 @@ function PastePoints({value:rows,onChange:oc}){
 }
 
 // ═══════════════════════════════════════════════
+// TEAM PICKER — auto-fill colors, names, logos
+// ═══════════════════════════════════════════════
+const SPORTS = Object.keys(TEAMS).filter(k => TEAMS[k].length > 0);
+
+function TeamPickerDropdown({ onSelect, label }) {
+  const [sport, setSport] = useState(SPORTS[0] || "");
+  const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState("");
+  const btnRef = useRef(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const teams = TEAMS[sport] || [];
+
+  if (SPORTS.length === 0) return null;
+
+  const openPicker = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 4, left: Math.min(r.left, window.innerWidth - 300) });
+    }
+    setOpen(!open);
+  };
+
+  return (
+    <div style={{ display: "inline-block" }}>
+      <button ref={btnRef} type="button" onClick={openPicker} style={{
+        ...BS, fontSize: 9, padding: "3px 8px", background: open ? C.green : C.s3,
+      }}>{label || "Pick Team"}</button>
+      {open && ReactDOM.createPortal(
+        <div style={{
+          position: "fixed", top: pos.top, left: pos.left, zIndex: 9999,
+          width: 280, background: C.s2, border: `1px solid ${C.brd}`, borderRadius: 8,
+          padding: 8, boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+        }}>
+          <div style={{ display: "flex", gap: 3, marginBottom: 6, flexWrap: "wrap" }}>
+            {SPORTS.map(s => (
+              <button type="button" key={s} onClick={() => setSport(s)} style={{
+                ...BS, background: sport === s ? C.green : C.s3, fontSize: 9,
+                textTransform: "uppercase", padding: "2px 6px",
+              }}>{s}</button>
+            ))}
+          </div>
+          <input type="text" value={filter} placeholder="Search..." style={{ ...IS, fontSize: 11, marginBottom: 4, padding: "5px 8px" }}
+            onChange={e => setFilter(e.target.value)} />
+          <div style={{ maxHeight: 200, overflowY: "scroll", display: "flex", flexDirection: "column", gap: 1 }}>
+            {teams.filter(t => {
+              if (!filter) return true;
+              const q = filter.toLowerCase();
+              return t.displayName.toLowerCase().includes(q) || t.abbreviation.toLowerCase().includes(q) || t.fullName.toLowerCase().includes(q);
+            }).map(t => (
+              <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 6px",
+                borderRadius: 4, cursor: "pointer", flexShrink: 0 }}
+                onClick={() => { onSelect(t); setOpen(false); setFilter(""); }}
+                onMouseEnter={e => e.currentTarget.style.background = C.s3}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >
+                {t.logo && <img src={t.logo} alt="" width={18} height={18} style={{ objectFit: "contain", flexShrink: 0 }}
+                  onError={e => { e.target.style.display = "none"; }} />}
+                <div style={{ flex: 1, fontSize: 11, color: C.white, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}>{t.displayName}</div>
+                <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: 2, background: "#" + t.primaryColor }} />
+                  <div style={{ width: 10, height: 10, borderRadius: 2, background: "#" + t.secondaryColor }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
 // ERROR BOUNDARY — catches crashes inside Remotion Player
 // ═══════════════════════════════════════════════
 class PreviewErrorBoundary extends React.Component {
@@ -261,7 +336,7 @@ function LivePreview({ id, p, dur }) {
 // ═══════════════════════════════════════════════
 // RENDER PANEL — one-click render via render-server
 // ═══════════════════════════════════════════════
-const RENDER_SERVER = "http://localhost:3002";
+const RENDER_SERVER = "http://localhost:3100";
 
 function RenderPanel({ sel, props, dur }) {
   const [job, setJob] = useState(null); // null | { jobId, state, outputPath, error, log }
@@ -442,6 +517,7 @@ export default function App(){
           <p style={{fontSize:12,color:C.t2,margin:0}}>{schema.desc}</p>
         </div>
 
+        {/* Team Picker */}
         {/* Duration */}
         <div style={{marginBottom:16}}>
           <label style={{fontSize:11,fontWeight:600,color:C.t2,display:"block",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.05em"}}>Duration ({(dur/30).toFixed(1)}s)</label>
@@ -451,7 +527,20 @@ export default function App(){
         {/* Fields */}
         {visible.map(fl=><div key={fl.k} style={{marginBottom:14}}>
           <label style={{fontSize:11,fontWeight:600,color:C.t2,display:"block",marginBottom:4,textTransform:"uppercase",letterSpacing:"0.05em"}}>{fl.l}</label>
-          {fl.t==="text"&&<input style={IS} value={g(props,fl.k)??""}placeholder={fl.ph} onChange={e=>up(fl.k,e.target.value)}/>}
+          {fl.t==="text"&&<div style={{display:"flex",gap:4,alignItems:"center"}}>
+            <input style={{...IS,flex:1}} value={g(props,fl.k)??""}placeholder={fl.ph} onChange={e=>up(fl.k,e.target.value)}/>
+            {(fl.k.toLowerCase().includes("name")||fl.k.toLowerCase().includes("team")||fl.k.toLowerCase().includes("entity"))&&SPORTS.length>0&&
+              <TeamPickerDropdown label="⚡" onSelect={team=>{
+                const prefix=fl.k.replace(/\.?(name|team)$/i,"");
+                up(fl.k,team.abbreviation);
+                const allFields=schema.fields;
+                const colorKey=allFields.find(f=>f.t==="color"&&f.k.startsWith(prefix)&&!f.k.includes("accent"));
+                if(colorKey)up(colorKey.k,"#"+team.primaryColor);
+                const logoKey=allFields.find(f=>f.k.startsWith(prefix)&&f.k.toLowerCase().includes("logo"));
+                if(logoKey)up(logoKey.k,team.logo);
+              }}/>
+            }
+          </div>}
           {fl.t==="number"&&<input style={{...IS,width:120}} type="number" value={g(props,fl.k)??0} onChange={e=>up(fl.k,+e.target.value)}/>}
           {fl.t==="textarea"&&<textarea style={{...IS,resize:"vertical",lineHeight:1.5}} rows={3} value={g(props,fl.k)??""} placeholder={fl.ph} onChange={e=>up(fl.k,e.target.value)}/>}
           {fl.t==="select"&&<select style={{...IS,cursor:"pointer"}} value={g(props,fl.k)??""} onChange={e=>up(fl.k,e.target.value)}>{(fl.o||[]).map(o=><option key={o} value={o}>{o||"(none)"}</option>)}</select>}

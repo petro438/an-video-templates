@@ -20,8 +20,8 @@ export const schema: TemplateSchema = {
 };
 
 const ComparableSide: React.FC<{
-  name: string; detail: string; stat: string; delay: number; negated: boolean; speed?: number;
-}> = ({ name, detail, stat, delay, negated, speed }) => {
+  name: string; detail: string; stat: string; logo?: string; useLogo?: boolean; delay: number; negated: boolean; speed?: number;
+}> = ({ name, detail, stat, logo, useLogo, delay, negated, speed }) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const enter = spring({ frame: frame - delay, fps, config: anim.springSnappy, durationInFrames: 15 });
@@ -37,9 +37,13 @@ const ComparableSide: React.FC<{
       {/* Top accent bar */}
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 5, background: colors.yellow }} />
 
-      <div style={{ fontSize: 52, fontFamily: f.display,
-        color: colors.white, textTransform: "uppercase", letterSpacing: "0.04em",
-        marginBottom: 14 }}>{name}</div>
+      {useLogo && logo ? (
+        <img src={logo} style={{ width: 80, height: 80, objectFit: "contain", marginBottom: 14 }} />
+      ) : (
+        <div style={{ fontSize: 52, fontFamily: f.display,
+          color: colors.white, textTransform: "uppercase", letterSpacing: "0.04em",
+          marginBottom: 14 }}>{name}</div>
+      )}
 
       <div style={{ fontSize: 22, fontFamily: f.mono,
         color: colors.text2, marginBottom: 32, letterSpacing: "0.06em",
@@ -65,7 +69,7 @@ const ComparableSide: React.FC<{
 };
 
 export const Comparable: React.FC<ComparableProps> = ({
-  subjectA, subjectB, connector = "IS COMPARABLE TO", negated = false, speed,
+  subjectA, subjectB, connector = "IS COMPARABLE TO", negated = false, useLogo, speed,
 }) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
@@ -82,7 +86,7 @@ export const Comparable: React.FC<ComparableProps> = ({
       <div style={{ position: "absolute", top: "50%", left: "50%",
         transform: "translate(-50%, -50%)", width: 1560 }}>
         <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
-          <ComparableSide {...subjectA} delay={5} negated={false} speed={speed} />
+          <ComparableSide {...subjectA} useLogo={useLogo} delay={5} negated={false} speed={speed} />
 
           {/* Connector */}
           <div style={{
@@ -106,7 +110,7 @@ export const Comparable: React.FC<ComparableProps> = ({
             )}
           </div>
 
-          <ComparableSide {...subjectB} delay={10} negated={false} speed={speed} />
+          <ComparableSide {...subjectB} useLogo={useLogo} delay={10} negated={false} speed={speed} />
         </div>
       </div>
 

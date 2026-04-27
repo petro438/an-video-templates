@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, anim, styles, Scanlines, type FlexTableProps, type TemplateSchema } from "../lib/theme";
 import { f } from "../lib/fonts";
+import { teamLogo } from "../lib/teamLookup";
 
 export const schema: TemplateSchema = {
   id: "FlexTable", name: "T15: Flex Table", icon: "📋",
@@ -28,7 +29,7 @@ export const schema: TemplateSchema = {
 };
 
 export const FlexTable: React.FC<FlexTableProps> = ({
-  title, columns, rows, highlightColor = colors.yellow, showRank = false, speed,}) => {
+  title, columns, rows, highlightColor = colors.yellow, showRank = false, useLogo, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
@@ -113,6 +114,7 @@ export const FlexTable: React.FC<FlexTableProps> = ({
                 const col = normalizedCols[j];
                 const isFirst = j === 0;
                 const align = col ? alignMap[col.align || "left"] : "left";
+                const logo = isFirst && useLogo && cell ? teamLogo(cell) : undefined;
                 return (
                   <div key={j} style={{
                     width: colW,
@@ -123,7 +125,8 @@ export const FlexTable: React.FC<FlexTableProps> = ({
                     color: hl ? (isFirst ? colors.text1 : colors.white) : (isFirst ? colors.text2 : colors.text3),
                     letterSpacing: isFirst ? "0.02em" : "0.01em",
                     paddingRight: j < normalizedCols.length - 1 ? 12 : 0,
-                  }}>{cell}</div>
+                    display: isFirst ? "flex" : undefined, alignItems: isFirst ? "center" : undefined, gap: isFirst ? 10 : undefined,
+                  }}>{logo && <img src={logo} style={{ width: 28, height: 28, objectFit: "contain", flexShrink: 0 }} />}{cell}</div>
                 );
               })}
             </div>

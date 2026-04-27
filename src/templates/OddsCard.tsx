@@ -13,18 +13,21 @@ export const schema: TemplateSchema = {
     { key: "teamA.odds", label: "Team A Odds", type: "text", placeholder: "-180", default: "-180" },
     { key: "teamA.role", label: "Team A Role", type: "select", options: ["FAVORITE", "UNDERDOG", ""], default: "FAVORITE" },
     { key: "teamA.color", label: "Team A Color", type: "color", default: "#E82020" },
+    { key: "teamA.logo", label: "Team A Logo URL", type: "text", placeholder: "https://...", default: "" },
     { key: "teamB.name", label: "Team B Name", type: "text", placeholder: "DET", default: "DET" },
     { key: "teamB.odds", label: "Team B Odds", type: "text", placeholder: "+155", default: "+155" },
     { key: "teamB.role", label: "Team B Role", type: "select", options: ["FAVORITE", "UNDERDOG", ""], default: "UNDERDOG" },
     { key: "teamB.color", label: "Team B Color", type: "color", default: "#00c358" },
+    { key: "teamB.logo", label: "Team B Logo URL", type: "text", placeholder: "https://...", default: "" },
+    { key: "useLogo", label: "Show Logos", type: "toggle", default: false },
     { key: "variant", label: "Variant", type: "select", options: ["two-way", "three-way"], default: "two-way" },
     { key: "draw.odds", label: "Draw Odds", type: "text", placeholder: "+500", default: "", showWhen: { field: "variant", value: "three-way" } },
   ],
 };
 
 const OddsSide: React.FC<{
-  name: string; odds: string; role?: string; teamColor?: string; delay: number; speed?: number;
-}> = ({ name, odds, role, teamColor, delay, speed }) => {
+  name: string; odds: string; role?: string; teamColor?: string; logo?: string; useLogo?: boolean; delay: number; speed?: number;
+}> = ({ name, odds, role, teamColor, logo, useLogo, delay, speed }) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const enter = spring({ frame: frame - delay, fps, config: anim.springSnappy, durationInFrames: 15 });
@@ -43,8 +46,12 @@ const OddsSide: React.FC<{
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
       justifyContent: "center", gap: 8, transform: `translateY(${slideY}px)`, opacity }}>
-      <div style={{ fontSize: 72, fontFamily: f.display,
-        color: teamColor || colors.white, letterSpacing: "0.02em", textTransform: "uppercase" }}>{name}</div>
+      {useLogo && logo ? (
+        <img src={logo} style={{ width: 90, height: 90, objectFit: "contain" }} />
+      ) : (
+        <div style={{ fontSize: 72, fontFamily: f.display,
+          color: teamColor || colors.white, letterSpacing: "0.02em", textTransform: "uppercase" }}>{name}</div>
+      )}
       <div style={{ fontSize: 130, fontFamily: f.stats,
         color: colors.white, lineHeight: 1, letterSpacing: "0.02em" }}>{displayOdds}</div>
       {role && (
@@ -62,7 +69,7 @@ const OddsSide: React.FC<{
 };
 
 export const OddsCard: React.FC<OddsCardProps> = ({
-  event, teamA, teamB, draw, variant = draw ? "three-way" : "two-way", speed,
+  event, teamA, teamB, draw, variant = draw ? "three-way" : "two-way", useLogo, speed,
 }) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
@@ -97,10 +104,10 @@ export const OddsCard: React.FC<OddsCardProps> = ({
             color: colors.text3, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 44 }}>{event}</div>
         )}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <OddsSide name={teamA.name} odds={teamA.odds} role={teamA.role} teamColor={teamA.color} delay={5} speed={speed} />
+          <OddsSide name={teamA.name} odds={teamA.odds} role={teamA.role} teamColor={teamA.color} logo={teamA.logo} useLogo={useLogo} delay={5} speed={speed} />
           {/* Center divider — bold vertical rule */}
           <div style={{ width: 2, height: 200, background: colors.borderLight, margin: "0 60px", flexShrink: 0 }} />
-          <OddsSide name={teamB.name} odds={teamB.odds} role={teamB.role} teamColor={teamB.color} delay={10} speed={speed} />
+          <OddsSide name={teamB.name} odds={teamB.odds} role={teamB.role} teamColor={teamB.color} logo={teamB.logo} useLogo={useLogo} delay={10} speed={speed} />
         </div>
         {variant === "three-way" && draw && (
           <div style={{ textAlign: "center", marginTop: 32, paddingTop: 24,

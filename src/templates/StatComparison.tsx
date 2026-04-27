@@ -10,8 +10,11 @@ export const schema: TemplateSchema = {
   fields: [
     { key: "entityA.name", label: "Entity A", type: "text", placeholder: "BOS", default: "BOS" },
     { key: "entityA.color", label: "A Color", type: "color", default: "#FFFFFF" },
+    { key: "entityA.logo", label: "A Logo URL", type: "text", placeholder: "https://...", default: "" },
     { key: "entityB.name", label: "Entity B", type: "text", placeholder: "MIL", default: "MIL" },
     { key: "entityB.color", label: "B Color", type: "color", default: "#FFFFFF" },
+    { key: "entityB.logo", label: "B Logo URL", type: "text", placeholder: "https://...", default: "" },
+    { key: "useLogo", label: "Show Logos", type: "toggle", default: false },
     { key: "stats", label: "Stats", type: "stat-rows", default: [
       { label: "PPG", valueA: 110, valueB: 105, suffix: "" },
       { label: "FG%", valueA: 47, valueB: 45, suffix: "%" },
@@ -62,7 +65,7 @@ const Bar: React.FC<{
   );
 };
 
-export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB, stats, speed }) => {
+export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB, stats, useLogo, speed }) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const hdrEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 12 });
@@ -74,16 +77,24 @@ export const StatComparison: React.FC<StatComparisonProps> = ({ entityA, entityB
       <Scanlines />
       <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 1720 }}>
         {/* Entity names */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end",
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
           marginBottom: 20, opacity: hdrOp }}>
-          <div style={{ fontSize: 100, fontFamily: f.display,
-            color: entityA.color || colors.text1, textTransform: "uppercase",
-            letterSpacing: "0.03em", lineHeight: 0.9 }}>{entityA.name}</div>
+          {useLogo && entityA.logo ? (
+            <img src={entityA.logo} style={{ width: 120, height: 120, objectFit: "contain" }} />
+          ) : (
+            <div style={{ fontSize: 100, fontFamily: f.display,
+              color: entityA.color || colors.text1, textTransform: "uppercase",
+              letterSpacing: "0.03em", lineHeight: 0.9 }}>{entityA.name}</div>
+          )}
           <div style={{ fontSize: 20, fontFamily: f.mono, color: colors.text4,
             letterSpacing: "0.25em", paddingBottom: 12 }}>VS</div>
-          <div style={{ fontSize: 100, fontFamily: f.display,
-            color: entityB.color || colors.text1, textTransform: "uppercase",
-            letterSpacing: "0.03em", lineHeight: 0.9, textAlign: "right" }}>{entityB.name}</div>
+          {useLogo && entityB.logo ? (
+            <img src={entityB.logo} style={{ width: 120, height: 120, objectFit: "contain" }} />
+          ) : (
+            <div style={{ fontSize: 100, fontFamily: f.display,
+              color: entityB.color || colors.text1, textTransform: "uppercase",
+              letterSpacing: "0.03em", lineHeight: 0.9, textAlign: "right" }}>{entityB.name}</div>
+          )}
         </div>
         {/* Yellow dividing rule — expands full width */}
         <div style={{ height: 4, background: colors.yellow, marginBottom: 32, width: `${ruleW}%` }} />

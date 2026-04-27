@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, anim, styles, Scanlines, type GameFlashProps, type TemplateSchema } from "../lib/theme";
 import { f } from "../lib/fonts";
+import { teamLogo } from "../lib/teamLookup";
 
 export const schema: TemplateSchema = {
   id: "GameFlash",
@@ -21,7 +22,7 @@ export const schema: TemplateSchema = {
 };
 
 export const GameFlash: React.FC<GameFlashProps> = ({
-  title, games, framesPerGame = 30, accentColor = colors.green, speed,}) => {
+  title, games, framesPerGame = 30, useLogo, accentColor = colors.green, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
@@ -75,8 +76,16 @@ export const GameFlash: React.FC<GameFlashProps> = ({
               <div style={{ opacity: enterOp, transform: `translateY(${enterSlide}px)` }}>
                 <div style={{ fontSize: 22, fontFamily: f.mono, color: colors.text3,
                   textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: 16 }}>{week}</div>
-                <div style={{ fontSize: 80, fontFamily: f.display, color: colors.white,
-                  textTransform: "uppercase", letterSpacing: "0.03em", lineHeight: 1.1 }}>{opponent}</div>
+                {useLogo && teamLogo(opponent.replace(/^(vs |@ )/i, "")) ? (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
+                    <img src={teamLogo(opponent.replace(/^(vs |@ )/i, ""))!} style={{ width: 100, height: 100, objectFit: "contain" }} />
+                    <div style={{ fontSize: 80, fontFamily: f.display, color: colors.white,
+                      textTransform: "uppercase", letterSpacing: "0.03em", lineHeight: 1.1 }}>{opponent}</div>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 80, fontFamily: f.display, color: colors.white,
+                    textTransform: "uppercase", letterSpacing: "0.03em", lineHeight: 1.1 }}>{opponent}</div>
+                )}
               </div>
               <div style={{ marginTop: 30, opacity: scoreOp, transform: `scale(${scoreScale})` }}>
                 <div style={{ fontSize: 100, fontFamily: f.stats, color: resultColor,

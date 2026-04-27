@@ -21,7 +21,7 @@ export const schema: TemplateSchema = {
 };
 
 export const SeasonSchedule: React.FC<SeasonScheduleProps> = ({
-  title, team, games, accentColor = colors.green, speed,}) => {
+  title, team, games, teamLogo, accentColor = colors.green, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
@@ -48,7 +48,8 @@ export const SeasonSchedule: React.FC<SeasonScheduleProps> = ({
           </div>
         )}
         {team && (
-          <div style={{ marginBottom: 20, opacity: titleOp }}>
+          <div style={{ marginBottom: 20, opacity: titleOp, display: "flex", alignItems: "center", gap: 16 }}>
+            {teamLogo && <img src={teamLogo} style={{ width: 48, height: 48, objectFit: "contain" }} />}
             <div style={{ fontSize: 28, fontFamily: f.body, color: accentColor,
               textTransform: "uppercase", letterSpacing: "0.08em" }}>{team}</div>
             <div style={{ height: 4, background: accentColor, marginTop: 8, width: `${titleOp * 100}%` }} />

@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, anim, styles, Scanlines, type StandingsTableProps, type TemplateSchema } from "../lib/theme";
 import { f } from "../lib/fonts";
+import { teamLogo } from "../lib/teamLookup";
 
 export const schema: TemplateSchema = {
   id: "StandingsTable", name: "T6: Standings Table", icon: "🏆",
@@ -18,7 +19,7 @@ export const schema: TemplateSchema = {
   ],
 };
 
-export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, rows, highlightColor = colors.yellow, speed,}) => {
+export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, rows, highlightColor = colors.yellow, useLogo, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
@@ -74,7 +75,10 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({ title, columns, 
                   color: hl ? highlightColor : colors.text3 }}>{row.rank ?? i + 1}</div>
                 <div style={{ width: nameW, fontSize: 30,
                   fontFamily: f.body, color: hl ? colors.text1 : colors.text2,
-                  fontWeight: hl ? 700 : 400, letterSpacing: "0.02em" }}>{row.name}</div>
+                  fontWeight: hl ? 700 : 400, letterSpacing: "0.02em", display: "flex", alignItems: "center", gap: 12 }}>
+                  {useLogo && teamLogo(row.name) && <img src={teamLogo(row.name)} style={{ width: 36, height: 36, objectFit: "contain" }} />}
+                  {row.name}
+                </div>
                 {(row.values || []).map((v, j) => (
                   <div key={j} style={{ width: dataW, textAlign: "center", fontSize: 40,
                     fontFamily: f.stats, color: hl ? colors.text1 : colors.text3 }}>{v}</div>

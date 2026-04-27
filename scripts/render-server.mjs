@@ -12,11 +12,11 @@
 
 import { createServer } from "http";
 import { spawn } from "child_process";
-import { mkdirSync } from "fs";
+import { mkdirSync, writeFileSync, unlinkSync } from "fs";
 import { resolve } from "path";
 import { randomUUID } from "crypto";
 
-const PORT = 3002;
+const PORT = 3100;
 const PROJECT_ROOT = resolve(process.cwd());
 const OUT_DIR = resolve(PROJECT_ROOT, "out");
 mkdirSync(OUT_DIR, { recursive: true });
@@ -57,12 +57,15 @@ function startRender(job) {
   const { jobId, compositionId, props, durationInFrames, outputPath } = job;
   job.state = "rendering";
 
+  const propsFile = resolve(OUT_DIR, `.props-${jobId}.json`);
+  writeFileSync(propsFile, JSON.stringify(props));
+
   const args = [
     "remotion", "render",
     "src/index.ts",
     compositionId,
     outputPath,
-    `--props=${JSON.stringify(props)}`,
+    `--props=${propsFile}`,
     "--log=warn",
   ];
 
@@ -82,6 +85,7 @@ function startRender(job) {
   });
 
   child.on("close", code => {
+    try { unlinkSync(propsFile); } catch {}
     if (code === 0) {
       job.state = "done";
       console.log(`  ✅ Job ${jobId} done → ${outputPath}`);

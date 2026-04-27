@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { colors, anim, styles, Scanlines, type ScatterPlotProps, type TemplateSchema } from "../lib/theme";
 import { f } from "../lib/fonts";
+import { teamLogo } from "../lib/teamLookup";
 
 export const schema: TemplateSchema = {
   id: "ScatterPlot", name: "T14: Scatter Plot", icon: "📊",
@@ -23,7 +24,7 @@ export const schema: TemplateSchema = {
 };
 
 export const ScatterPlot: React.FC<ScatterPlotProps> = ({
-  title, xLabel, yLabel, points, quadrants, speed,}) => {
+  title, xLabel, yLabel, points, quadrants, useLogo, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
 
@@ -164,17 +165,22 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({
           // Prefer label above, but nudge below if near top edge
           const labelAbove = cy > chartT + 60;
 
+          const logo = useLogo ? teamLogo(pt.label) : undefined;
           return (
             <g key={i} opacity={ptOp}>
-              {/* Square dot */}
-              <rect x={cx - r} y={cy - r} width={r * 2} height={r * 2} fill={dotColor} />
-              {/* Label */}
-              <text
-                x={cx} y={labelAbove ? cy - 24 : cy + 44}
-                textAnchor="middle"
-                fill={colors.white} fontFamily={f.mono} fontSize={20}
-                fontWeight="600" letterSpacing="0.06em"
-              >{pt.label}</text>
+              {logo ? (
+                <image href={logo} x={cx - 18} y={cy - 18} width={36} height={36} />
+              ) : (
+                <rect x={cx - r} y={cy - r} width={r * 2} height={r * 2} fill={dotColor} />
+              )}
+              {!logo && (
+                <text
+                  x={cx} y={labelAbove ? cy - 24 : cy + 44}
+                  textAnchor="middle"
+                  fill={colors.white} fontFamily={f.mono} fontSize={20}
+                  fontWeight="600" letterSpacing="0.06em"
+                >{pt.label}</text>
+              )}
             </g>
           );
         })}

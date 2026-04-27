@@ -115,10 +115,11 @@ export interface TemplateSchema {
 // ── Shared Prop Interfaces ──
 export interface OddsCardProps {
   event?: string;
-  teamA: { name: string; odds: string; role?: string; color?: string };
-  teamB: { name: string; odds: string; role?: string; color?: string };
+  teamA: { name: string; odds: string; role?: string; color?: string; logo?: string };
+  teamB: { name: string; odds: string; role?: string; color?: string; logo?: string };
   draw?: { odds: string };
   variant?: "two-way" | "three-way";
+  useLogo?: boolean;
   speed?: number;
 }
 export interface BigNumberProps {
@@ -137,15 +138,17 @@ export interface LowerThirdProps {
   speed?: number;
 }
 export interface StatComparisonProps {
-  entityA: { name: string; color?: string };
-  entityB: { name: string; color?: string };
+  entityA: { name: string; color?: string; logo?: string };
+  entityB: { name: string; color?: string; logo?: string };
   stats: Array<{ label: string; valueA: number; valueB: number; suffix?: string }>;
+  useLogo?: boolean;
   speed?: number;
 }
 export interface ScoreboardProps {
-  teamA: { name: string; score: number };
-  teamB: { name: string; score: number };
+  teamA: { name: string; score: number; logo?: string };
+  teamB: { name: string; score: number; logo?: string };
   event?: string; date?: string; badge?: string;
+  useLogo?: boolean;
   speed?: number;
 }
 export interface ProbabilityVizProps {
@@ -157,6 +160,7 @@ export interface StandingsTableProps {
   title: string; columns: string[];
   rows: Array<{ rank?: number; name: string; values: string[]; highlight?: boolean }>;
   highlightColor?: string;
+  useLogo?: boolean;
   speed?: number;
 }
 export interface TimelineProps {
@@ -180,10 +184,11 @@ export interface ExplainerProps {
   speed?: number;
 }
 export interface ComparableProps {
-  subjectA: { name: string; detail: string; stat: string };
-  subjectB: { name: string; detail: string; stat: string };
+  subjectA: { name: string; detail: string; stat: string; logo?: string };
+  subjectB: { name: string; detail: string; stat: string; logo?: string };
   connector?: string;
   negated?: boolean;
+  useLogo?: boolean;
   speed?: number;
 }
 export interface HeatMapProps {
@@ -202,6 +207,7 @@ export interface ScatterPlotProps {
   yLabel?: string;
   points: Array<{ label: string; x: number; y: number; color?: string }>;
   quadrants?: { topLeft?: string; topRight?: string; bottomLeft?: string; bottomRight?: string };
+  useLogo?: boolean;
   speed?: number;
 }
 export interface FlexTableProps {
@@ -210,11 +216,13 @@ export interface FlexTableProps {
   rows: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
   highlightColor?: string;
   showRank?: boolean;
+  useLogo?: boolean;
   speed?: number;
 }
 export interface SeasonScheduleProps {
   title?: string;
   team?: string;
+  teamLogo?: string;
   games: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
   accentColor?: string;
   speed?: number;
@@ -223,6 +231,7 @@ export interface GameFlashProps {
   title?: string;
   games: Array<{ cells?: string[]; name?: string; values?: string[]; highlight?: boolean }>;
   framesPerGame?: number;
+  useLogo?: boolean;
   accentColor?: string;
   speed?: number;
 }

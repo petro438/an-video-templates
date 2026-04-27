@@ -10,15 +10,18 @@ export const schema: TemplateSchema = {
   fields: [
     { key: "teamA.name", label: "Team A", type: "text", default: "USA" },
     { key: "teamA.score", label: "A Score", type: "number", default: 0 },
+    { key: "teamA.logo", label: "A Logo URL", type: "text", placeholder: "https://...", default: "" },
     { key: "teamB.name", label: "Team B", type: "text", default: "USSR" },
     { key: "teamB.score", label: "B Score", type: "number", default: 0 },
+    { key: "teamB.logo", label: "B Logo URL", type: "text", placeholder: "https://...", default: "" },
+    { key: "useLogo", label: "Show Logos", type: "toggle", default: false },
     { key: "event", label: "Event", type: "text", default: "" },
     { key: "date", label: "Date", type: "text", default: "" },
     { key: "badge", label: "Badge", type: "select", options: ["", "UPSET", "FINAL", "EXHIBITION", "OT"], default: "" },
   ],
 };
 
-export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, date, badge, speed,}) => {
+export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, date, badge, useLogo, speed,}) => {
   const frame = useCurrentFrame() * (speed || 1);
   const { fps } = useVideoConfig();
   const cardEnter = spring({ frame, fps, config: anim.springSnappy, durationInFrames: 15 });
@@ -62,9 +65,13 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, dat
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           {/* Team A */}
           <div style={{ opacity: cardOp, transform: `translateX(${aSlide}px)` }}>
-            <div style={{ fontSize: 96, fontFamily: f.display,
-              color: winner === "A" ? colors.text1 : colors.text3,
-              textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 0.9 }}>{teamA.name}</div>
+            {useLogo && teamA.logo ? (
+              <img src={teamA.logo} style={{ width: 100, height: 100, objectFit: "contain" }} />
+            ) : (
+              <div style={{ fontSize: 96, fontFamily: f.display,
+                color: winner === "A" ? colors.text1 : colors.text3,
+                textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 0.9 }}>{teamA.name}</div>
+            )}
             <div style={{ fontSize: 220, fontFamily: f.stats,
               color: winner === "A" ? colors.yellow : colors.text3,
               lineHeight: 0.85, letterSpacing: "0.01em" }}>{sA}</div>
@@ -87,9 +94,15 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ teamA, teamB, event, dat
 
           {/* Team B */}
           <div style={{ textAlign: "right", opacity: cardOp, transform: `translateX(${bSlide}px)` }}>
-            <div style={{ fontSize: 96, fontFamily: f.display,
-              color: winner === "B" ? colors.text1 : colors.text3,
-              textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 0.9 }}>{teamB.name}</div>
+            {useLogo && teamB.logo ? (
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <img src={teamB.logo} style={{ width: 100, height: 100, objectFit: "contain" }} />
+              </div>
+            ) : (
+              <div style={{ fontSize: 96, fontFamily: f.display,
+                color: winner === "B" ? colors.text1 : colors.text3,
+                textTransform: "uppercase", letterSpacing: "0.04em", lineHeight: 0.9 }}>{teamB.name}</div>
+            )}
             <div style={{ fontSize: 220, fontFamily: f.stats,
               color: winner === "B" ? colors.yellow : colors.text3,
               lineHeight: 0.85, letterSpacing: "0.01em" }}>{sB}</div>
