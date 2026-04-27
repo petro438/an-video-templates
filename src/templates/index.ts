@@ -24,6 +24,8 @@ export { GameFlash, schema as GameFlashSchema } from "./GameFlash";
 export { ListScanner, schema as ListScannerSchema } from "./ListScanner";
 export { DotStrip, schema as DotStripSchema } from "./DotStrip";
 export { RetroTV, schema as RetroTVSchema } from "./RetroTV";
+export { Background, schema as BackgroundSchema } from "./Background";
+export { OldNewspaper, schema as OldNewspaperSchema } from "./OldNewspaper";
 
 import { schema as s1 } from "./OddsCard";
 import { schema as s2 } from "./StatComparison";
@@ -45,8 +47,10 @@ import { schema as s17 } from "./GameFlash";
 import { schema as s18 } from "./ListScanner";
 import { schema as s19 } from "./DotStrip";
 import { schema as s20 } from "./RetroTV";
+import { schema as s21 } from "./Background";
+import { schema as s22 } from "./OldNewspaper";
 
-export const ALL_SCHEMAS = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20];
+export const ALL_SCHEMAS = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19, s20, s21, s22];
 
 export const SCHEMA_MAP: Record<string, typeof s1> = Object.fromEntries(
   ALL_SCHEMAS.map(s => [s.id, s])

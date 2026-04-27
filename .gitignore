@@ -6,3 +6,4 @@ out/
 *.mov
 .env
 .env.local
+public/uploads/

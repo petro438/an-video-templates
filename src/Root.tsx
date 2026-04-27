@@ -20,6 +20,8 @@ import { GameFlash } from "./templates/GameFlash";
 import { ListScanner } from "./templates/ListScanner";
 import { DotStrip } from "./templates/DotStrip";
 import { RetroTV } from "./templates/RetroTV";
+import { Background } from "./templates/Background";
+import { OldNewspaper } from "./templates/OldNewspaper";
 import * as d from "./data/miracle-on-ice";
 
 const C = { width: 1920, height: 1080, fps: 30 };
@@ -73,5 +75,9 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="DotStrip" component={rc(DotStrip)} durationInFrames={240} {...C} defaultProps={d.miracleDotStrip} />
     {/* T20 */}
     <Composition id="RetroTV" component={rc(RetroTV)} durationInFrames={150} {...C} defaultProps={{ screenColor: "#00FF00", channel: "CH 3", showStatic: true, showScanlines: true }} />
+    {/* T21 */}
+    <Composition id="Background" component={rc(Background)} durationInFrames={300} {...C} defaultProps={{ variant: "default" }} />
+    {/* T22 */}
+    <Composition id="OldNewspaper" component={rc(OldNewspaper)} durationInFrames={300} {...C} defaultProps={{ variant: "desk", zoomTarget: "center", zoomAmount: 1.3 }} />
   </>
 );

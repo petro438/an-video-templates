@@ -114,6 +114,44 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  // POST /upload — save image to public/uploads, return URL
+  if (req.method === "POST" && req.url === "/upload") {
+    const chunks = [];
+    req.on("data", c => chunks.push(c));
+    req.on("end", () => {
+      try {
+        const buf = Buffer.concat(chunks);
+        const boundary = req.headers["content-type"]?.match(/boundary=(.+)/)?.[1];
+        if (!boundary) return send(res, 400, { error: "Missing multipart boundary" });
+
+        const raw = buf.toString("binary");
+        const parts = raw.split("--" + boundary).filter(p => p.includes("filename="));
+        if (parts.length === 0) return send(res, 400, { error: "No file in upload" });
+
+        const part = parts[0];
+        const filenameMatch = part.match(/filename="([^"]+)"/);
+        const filename = (filenameMatch?.[1] || "upload.png").replace(/[^a-zA-Z0-9._-]/g, "_");
+        const ts = Date.now();
+        const dest = `${ts}-${filename}`;
+
+        const headerEnd = part.indexOf("\r\n\r\n");
+        const bodyStart = headerEnd + 4;
+        const bodyEnd = part.lastIndexOf("\r\n");
+        const fileData = Buffer.from(part.slice(bodyStart, bodyEnd), "binary");
+
+        const uploadDir = resolve(PROJECT_ROOT, "public", "uploads");
+        mkdirSync(uploadDir, { recursive: true });
+        writeFileSync(resolve(uploadDir, dest), fileData);
+
+        console.log(`  📎 Uploaded: public/uploads/${dest} (${fileData.length} bytes)`);
+        return send(res, 200, { path: `/uploads/${dest}`, filename: dest });
+      } catch (e) {
+        return send(res, 500, { error: e.message });
+      }
+    });
+    return;
+  }
+
   // POST /render
   if (req.method === "POST" && req.url === "/render") {
     let body;

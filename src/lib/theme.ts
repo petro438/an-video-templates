@@ -235,6 +235,21 @@ export interface GameFlashProps {
   accentColor?: string;
   speed?: number;
 }
+export interface BackgroundProps {
+  variant?: "default" | "minimal" | "geometric" | "gradient";
+  showWatermark?: boolean;
+  showScanlines?: boolean;
+  accentColor?: string;
+  speed?: number;
+}
+export interface OldNewspaperProps {
+  imageUrl?: string;
+  caption?: string;
+  variant?: "desk" | "paper" | "dark";
+  zoomTarget?: "center" | "top" | "bottom" | "left" | "right" | "none";
+  zoomAmount?: number;
+  speed?: number;
+}
 export interface RetroTVProps {
   screenColor?: string;
   caption?: string;

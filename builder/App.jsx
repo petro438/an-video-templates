@@ -8,6 +8,7 @@ import {
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
   SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
+  Background, OldNewspaper,
 } from "@templates/index";
 
 // ═══════════════════════════════════════════════
@@ -159,6 +160,45 @@ function PastePoints({value:rows,onChange:oc}){
 }
 
 // ═══════════════════════════════════════════════
+// IMAGE UPLOAD — uploads to render server, returns path
+// ═══════════════════════════════════════════════
+const RENDER_SERVER_URL = "http://localhost:3100";
+
+function ImageUploadButton({ onUploaded }) {
+  const fileRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`${RENDER_SERVER_URL}/upload`, { method: "POST", body: form });
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      const { path } = await res.json();
+      onUploaded(path);
+    } catch (err) {
+      alert("Upload failed. Make sure the render server is running (npm run render-server).\n\n" + err.message);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
+
+  return (
+    <div style={{ flexShrink: 0 }}>
+      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
+      <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} style={{
+        ...BS, fontSize: 9, padding: "3px 8px", background: uploading ? C.s3 : C.s2,
+        opacity: uploading ? 0.5 : 1,
+      }}>{uploading ? "..." : "📁"}</button>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════
 // TEAM PICKER — auto-fill colors, names, logos
 // ═══════════════════════════════════════════════
 const SPORTS = Object.keys(TEAMS).filter(k => TEAMS[k].length > 0);
@@ -268,6 +308,7 @@ const COMPS = {
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
   SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
+  Background, OldNewspaper,
 };
 
 class InnerErrorBoundary extends React.Component {
@@ -539,6 +580,9 @@ export default function App(){
                 const logoKey=allFields.find(f=>f.k.startsWith(prefix)&&f.k.toLowerCase().includes("logo"));
                 if(logoKey)up(logoKey.k,team.logo);
               }}/>
+            }
+            {(fl.k.toLowerCase().includes("image")||fl.l.toLowerCase().includes("image"))&&
+              <ImageUploadButton onUploaded={path=>up(fl.k,path)}/>
             }
           </div>}
           {fl.t==="number"&&<input style={{...IS,width:120}} type="number" value={g(props,fl.k)??0} onChange={e=>up(fl.k,+e.target.value)}/>}

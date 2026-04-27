@@ -336,6 +336,33 @@ export const SCHEMAS = [
       { k: "frameColor", l: "TV Frame Color", t: "color", d: "#1A1510" },
     ],
   },
+  {
+    id: "Background",
+    name: "T21: Background",
+    icon: "🎨",
+    desc: "Branded motion background — overlay tweets, videos, images in your NLE",
+    dur: 300,
+    fields: [
+      { k: "variant", l: "Style", t: "select", o: ["default", "minimal", "geometric", "gradient"], d: "default" },
+      { k: "showWatermark", l: "Show Watermark", t: "toggle", d: true },
+      { k: "showScanlines", l: "Show Scanlines", t: "toggle", d: true },
+      { k: "accentColor", l: "Accent Color", t: "color", d: "#00c358" },
+    ],
+  },
+  {
+    id: "OldNewspaper",
+    name: "T22: Newspaper Clipping",
+    icon: "📰",
+    desc: "Showcase newspaper clippings/images with vintage framing and Ken Burns zoom",
+    dur: 300,
+    fields: [
+      { k: "imageUrl", l: "Image URL", t: "text", ph: "https://... or local path", d: "" },
+      { k: "caption", l: "Caption", t: "text", ph: "The New York Times, Nov 4 1980", d: "" },
+      { k: "variant", l: "Background", t: "select", o: ["desk", "paper", "dark"], d: "desk" },
+      { k: "zoomTarget", l: "Zoom Target", t: "select", o: ["center", "top", "bottom", "left", "right", "none"], d: "center" },
+      { k: "zoomAmount", l: "Zoom Amount", t: "number", ph: "1.3", d: 1.3 },
+    ],
+  },
 ];
 
 for (const s of SCHEMAS) {
