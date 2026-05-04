@@ -16,6 +16,14 @@ node --version
 
 If you don't have it, download from [nodejs.org](https://nodejs.org/) (LTS version).
 
+**Optional — only if you'll use the batch clip downloader (Option D):**
+
+```bash
+brew install yt-dlp ffmpeg
+```
+
+`yt-dlp` fetches the videos and `ffmpeg` is required for accurate trimming at clip boundaries.
+
 ### 2. Clone the repo and install
 
 ```bash
@@ -123,6 +131,32 @@ This renders one MP4 per graphic shot into the `out/` folder. The production she
 npm run render:blueprint out/blueprint.json --beat 3
 ```
 
+### Option D: Batch clip downloader (YouTube → trimmed MP4s)
+
+For the research phase: collect a list of YouTube URLs and timestamps, then download all the trimmed clips in parallel.
+
+**Requires** `yt-dlp` and `ffmpeg` (see prerequisites above).
+
+**1. Build a CSV** with columns `url,start,end,label` (timestamps as `HH:MM:SS`, `MM:SS`, or raw seconds). See [inputs/clips.example.csv](inputs/clips.example.csv).
+
+```csv
+url,start,end,label
+https://www.youtube.com/watch?v=phXUjnWlnI0,1:23,1:48,campbell-td
+https://www.youtube.com/watch?v=phXUjnWlnI0,12:05,12:30,goal-line-stand
+```
+
+**2. Run the downloader:**
+```bash
+npm run fetch:clips -- inputs/clips.csv
+```
+
+**Options:**
+```bash
+npm run fetch:clips -- inputs/clips.csv --out out/clips --concurrency 6
+```
+
+Outputs land in `out/clips/001-{label}.mp4`, `002-{label}.mp4`, etc. Failures don't block other downloads — the script reports a summary and exits non-zero if any failed so you can retry.
+
 ---
 
 ## Template Reference
@@ -194,7 +228,8 @@ an-video-templates/
 ├── scripts/
 │   ├── generate-blueprint.mjs   # AI blueprint generator
 │   ├── render-blueprint.mjs     # Blueprint batch renderer
-│   └── render-server.mjs        # HTTP render server
+│   ├── render-server.mjs        # HTTP render server
+│   └── fetch-clips.mjs          # Batch YouTube clip downloader
 ├── src/
 │   ├── data/          # Sample data (Miracle on Ice theme)
 │   ├── lib/
@@ -248,3 +283,4 @@ Toggle "Show Logos" on in the template. Make sure the team name matches somethin
 | `npm run generate:url -- <url>` | Generate blueprint from URL |
 | `npm run render:blueprint <file>` | Render all shots from a blueprint |
 | `npm run render:all` | Render all compositions with defaults |
+| `npm run fetch:clips -- <csv>` | Batch-download trimmed YouTube clips from a CSV |
