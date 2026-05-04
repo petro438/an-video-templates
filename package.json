@@ -11,7 +11,8 @@
     "render:blueprint": "node scripts/render-blueprint.mjs",
     "generate": "node scripts/generate-blueprint.mjs",
     "generate:url": "node scripts/generate-blueprint.mjs --url",
-    "render-server": "node scripts/render-server.mjs"
+    "render-server": "node scripts/render-server.mjs",
+    "fetch:clips": "node scripts/fetch-clips.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
