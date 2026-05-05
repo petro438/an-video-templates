@@ -104,21 +104,29 @@ function PexelsTool({ disabled }) {
   const [query, setQuery] = useState("");
   const [orientation, setOrientation] = useState("");
   const [results, setResults] = useState(null); // null | array
+  const [meta, setMeta] = useState(null); // { page, total }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [downloading, setDownloading] = useState({}); // { videoId: "downloading" | path | "error:msg" }
+  const lastSearchRef = useRef({ query: "", orientation: "" });
 
   const search = async () => {
     if (!query.trim()) return;
-    setLoading(true); setError(null); setResults(null);
+    const last = lastSearchRef.current;
+    const sameSearch = last.query === query && last.orientation === orientation;
+    const nextPage = sameSearch && meta ? meta.page + 1 : 1;
+
+    setLoading(true); setError(null);
     try {
       const r = await fetch(`${SERVER}/tools/pexels/search`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, perPage: 12, orientation: orientation || undefined }),
+        body: JSON.stringify({ query, perPage: 12, orientation: orientation || undefined, page: nextPage }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || `${r.status}`);
       setResults(data.videos);
+      setMeta({ page: data.page ?? nextPage, total: data.total ?? 0 });
+      lastSearchRef.current = { query, orientation };
     } catch (e) { setError(e.message); }
     finally { setLoading(false); }
   };
@@ -156,12 +164,19 @@ function PexelsTool({ disabled }) {
           <option value="square">square</option>
         </select>
         <button onClick={search} disabled={disabled || loading || !query.trim()}
-          style={{ ...BS, background: C.green, color: C.bg, opacity: (disabled || loading || !query.trim()) ? 0.5 : 1, padding: "8px 24px" }}>
-          {loading ? "Searching…" : "Search"}
+          style={{ ...BS, background: C.green, color: C.bg, opacity: (disabled || loading || !query.trim()) ? 0.5 : 1, padding: "8px 24px", whiteSpace: "nowrap" }}>
+          {loading ? "Searching…" : (meta && lastSearchRef.current.query === query && lastSearchRef.current.orientation === orientation) ? "More results" : "Search"}
         </button>
       </div>
 
       {error && <div style={{ color: C.red, fontSize: 12, marginBottom: 12 }}>{error}</div>}
+
+      {meta && results?.length > 0 && (
+        <div style={{ fontSize: 11, color: C.t3, fontFamily: F.m, marginBottom: 10 }}>
+          Page {meta.page} · showing {results.length} of {meta.total.toLocaleString()} total
+          {meta.page > 1 && <> · click <span style={{ color: C.t2 }}>More results</span> for the next batch (wraps to page 1 at the end)</>}
+        </div>
+      )}
 
       {results && results.length === 0 && <div style={{ color: C.t3, fontSize: 13 }}>No results.</div>}
 

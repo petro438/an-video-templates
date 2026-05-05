@@ -227,19 +227,28 @@ const server = createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/tools/pexels/search") {
     let body;
     try { body = await readBody(req); } catch (e) { return send(res, 400, { error: e.message }); }
-    const { query, perPage = 12, orientation } = body;
+    const { query, perPage = 12, orientation, page = 1 } = body;
     if (!process.env.PEXELS_API_KEY) return send(res, 400, { error: "Missing PEXELS_API_KEY in .env" });
     if (!query) return send(res, 400, { error: "query is required" });
 
-    const params = new URLSearchParams({ query, per_page: String(perPage) });
-    if (orientation) params.set("orientation", orientation);
-    try {
+    const fetchPage = async (p) => {
+      const params = new URLSearchParams({ query, per_page: String(perPage), page: String(p) });
+      if (orientation) params.set("orientation", orientation);
       const r = await fetch(`https://api.pexels.com/videos/search?${params}`, {
         headers: { Authorization: process.env.PEXELS_API_KEY },
       });
-      if (!r.ok) return send(res, r.status, { error: `Pexels: ${await r.text()}` });
-      const data = await r.json();
-      // Trim payload to what the UI needs
+      if (!r.ok) throw new Error(`Pexels ${r.status}: ${await r.text()}`);
+      return r.json();
+    };
+
+    try {
+      let data = await fetchPage(page);
+      let actualPage = page;
+      // If user paged past the end, wrap back to page 1 so "Search" always returns something
+      if ((data.videos ?? []).length === 0 && page > 1) {
+        data = await fetchPage(1);
+        actualPage = 1;
+      }
       const videos = (data.videos ?? []).map(v => ({
         id: v.id,
         url: v.url,
@@ -252,7 +261,12 @@ const server = createServer(async (req, res) => {
           quality: f.quality, width: f.width, height: f.height, link: f.link,
         })),
       }));
-      return send(res, 200, { videos });
+      return send(res, 200, {
+        videos,
+        page: actualPage,
+        perPage: data.per_page,
+        total: data.total_results,
+      });
     } catch (e) { return send(res, 500, { error: e.message }); }
   }
 
