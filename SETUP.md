@@ -4,6 +4,19 @@ A Remotion-based motion graphics pipeline that turns articles and stats into bro
 
 ---
 
+## Easiest path (Mac, no terminal experience needed)
+
+1. Download/clone this folder to your Mac
+2. Double-click **`setup.command`** — installs everything (Homebrew, Node, yt-dlp, ffmpeg, project deps), opens `.env` for you to paste API keys
+3. Double-click **`start.command`** — launches the Builder UI in your browser at http://localhost:3001
+4. From then on, just double-click `start.command` whenever you want to use the tool
+
+If macOS blocks `.command` files with "cannot verify developer," right-click → Open → Open. You only have to approve once per file.
+
+For Windows or manual setup, follow the Quick Start below.
+
+---
+
 ## Quick Start (5 minutes)
 
 ### 1. Install prerequisites
