@@ -12,14 +12,27 @@
 
 import { createServer } from "http";
 import { spawn } from "child_process";
-import { mkdirSync, writeFileSync, unlinkSync } from "fs";
+import { mkdirSync, writeFileSync, unlinkSync, existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { randomUUID } from "crypto";
+import { pipeline } from "stream/promises";
+import { createWriteStream } from "fs";
 
 const PORT = 3100;
 const PROJECT_ROOT = resolve(process.cwd());
 const OUT_DIR = resolve(PROJECT_ROOT, "out");
+const BROLL_DIR = resolve(OUT_DIR, "broll");
 mkdirSync(OUT_DIR, { recursive: true });
+mkdirSync(BROLL_DIR, { recursive: true });
+
+// Load .env so /tools/pexels/* and spawned scripts have keys available
+const envPath = resolve(PROJECT_ROOT, ".env");
+if (existsSync(envPath)) {
+  for (const line of readFileSync(envPath, "utf-8").split("\n")) {
+    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+    if (m) process.env[m[1]] ??= m[2].replace(/^["']|["']$/g, "");
+  }
+}
 
 // ── In-memory job store ────────────────────────────────────────────────────────
 
@@ -210,8 +223,113 @@ const server = createServer(async (req, res) => {
     return send(res, 200, list);
   }
 
+  // ── Tools: Pexels b-roll search ───────────────────────────────────────────
+  if (req.method === "POST" && req.url === "/tools/pexels/search") {
+    let body;
+    try { body = await readBody(req); } catch (e) { return send(res, 400, { error: e.message }); }
+    const { query, perPage = 12, orientation } = body;
+    if (!process.env.PEXELS_API_KEY) return send(res, 400, { error: "Missing PEXELS_API_KEY in .env" });
+    if (!query) return send(res, 400, { error: "query is required" });
+
+    const params = new URLSearchParams({ query, per_page: String(perPage) });
+    if (orientation) params.set("orientation", orientation);
+    try {
+      const r = await fetch(`https://api.pexels.com/videos/search?${params}`, {
+        headers: { Authorization: process.env.PEXELS_API_KEY },
+      });
+      if (!r.ok) return send(res, r.status, { error: `Pexels: ${await r.text()}` });
+      const data = await r.json();
+      // Trim payload to what the UI needs
+      const videos = (data.videos ?? []).map(v => ({
+        id: v.id,
+        url: v.url,
+        duration: v.duration,
+        width: v.width,
+        height: v.height,
+        image: v.image,
+        user: { name: v.user?.name, url: v.user?.url },
+        files: (v.video_files ?? []).filter(f => f.file_type === "video/mp4").map(f => ({
+          quality: f.quality, width: f.width, height: f.height, link: f.link,
+        })),
+      }));
+      return send(res, 200, { videos });
+    } catch (e) { return send(res, 500, { error: e.message }); }
+  }
+
+  // ── Tools: Pexels download ────────────────────────────────────────────────
+  if (req.method === "POST" && req.url === "/tools/pexels/download") {
+    let body;
+    try { body = await readBody(req); } catch (e) { return send(res, 400, { error: e.message }); }
+    const { id, link, query = "broll", width, height } = body;
+    if (!id || !link) return send(res, 400, { error: "id and link are required" });
+
+    const slug = String(query).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "broll";
+    const outPath = resolve(BROLL_DIR, `${id}-${slug}-${width}x${height}.mp4`);
+    try {
+      const r = await fetch(link);
+      if (!r.ok || !r.body) return send(res, r.status || 500, { error: `Download failed: ${r.status}` });
+      await pipeline(r.body, createWriteStream(outPath));
+      console.log(`  📥 Pexels: ${outPath}`);
+      return send(res, 200, { path: outPath });
+    } catch (e) { return send(res, 500, { error: e.message }); }
+  }
+
+  // ── Tools: Blueprint generation ───────────────────────────────────────────
+  if (req.method === "POST" && req.url === "/tools/blueprint/generate") {
+    let body;
+    try { body = await readBody(req); } catch (e) { return send(res, 400, { error: e.message }); }
+    const { text, url } = body;
+    if (!text && !url) return send(res, 400, { error: "Provide either text or url" });
+    if (!process.env.ANTHROPIC_API_KEY) return send(res, 400, { error: "Missing ANTHROPIC_API_KEY in .env" });
+
+    const jobId = randomUUID();
+    const ts = Date.now();
+    const outputPath = resolve(OUT_DIR, `blueprint-${ts}.json`);
+    const job = {
+      jobId, state: "queued", kind: "blueprint",
+      outputPath, log: [], createdAt: new Date(ts).toISOString(),
+    };
+    jobs.set(jobId, job);
+    setImmediate(() => startBlueprint(job, { text, url }));
+    return send(res, 200, { jobId });
+  }
+
   send(res, 404, { error: "Not found" });
 });
+
+// ── Blueprint job runner ────────────────────────────────────────────────────
+
+function startBlueprint(job, { text, url }) {
+  job.state = "running";
+  const args = ["scripts/generate-blueprint.mjs", "--out", job.outputPath];
+  if (url) args.push("--url", url);
+
+  const child = spawn("node", args, {
+    cwd: PROJECT_ROOT,
+    env: process.env,
+  });
+
+  if (text && !url) child.stdin.end(text);
+
+  child.stdout.on("data", d => {
+    const line = d.toString().trimEnd();
+    if (line) job.log.push(line);
+  });
+  child.stderr.on("data", d => {
+    const line = d.toString().trimEnd();
+    if (line) job.log.push(line);
+  });
+  child.on("close", code => {
+    if (code === 0) {
+      job.state = "done";
+      console.log(`  ✅ Blueprint job ${job.jobId} → ${job.outputPath}`);
+    } else {
+      job.state = "error";
+      job.error = `Blueprint script exited with code ${code}`;
+    }
+  });
+  child.on("error", e => { job.state = "error"; job.error = e.message; });
+}
 
 server.listen(PORT, () => {
   console.log(`\n🎬 Render server running at http://localhost:${PORT}`);

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { SCHEMAS as S } from "../src/lib/schemas.js";
 import { Player } from "@remotion/player";
 import TEAMS from "../src/lib/teams.json";
+import Tools from "./Tools.jsx";
 import {
   OddsCard, StatComparison, BigNumber, Timeline, QuoteCard,
   StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
@@ -504,6 +505,7 @@ function RenderPanel({ sel, props, dur }) {
 // MAIN APP
 // ═══════════════════════════════════════════════
 export default function App(){
+  const [mode,setMode]=useState("templates"); // templates | tools
   const [sel,setSel]=useState("OddsCard");
   const schema=S.find(s=>s.id===sel);
   const [props,setProps]=useState(()=>mkDef(schema));
@@ -534,9 +536,22 @@ export default function App(){
       <div style={{display:"flex",alignItems:"center",gap:10}}>
         <span style={{fontSize:18,fontWeight:800,fontFamily:F.d,letterSpacing:"0.04em"}}>ACTION</span>
         <span style={{color:C.green,fontSize:12}}>●</span>
-        <span style={{fontSize:13,color:C.t3,fontWeight:500}}>Template Builder</span>
+        <span style={{fontSize:13,color:C.t3,fontWeight:500}}>{mode==="templates"?"Template Builder":"Tools"}</span>
+      </div>
+      <div style={{display:"flex",gap:4,background:C.s2,border:`1px solid ${C.brd}`,borderRadius:8,padding:3}}>
+        {[{id:"templates",label:"Templates"},{id:"tools",label:"Tools"}].map(m=>(
+          <button key={m.id} onClick={()=>setMode(m.id)} style={{
+            background:mode===m.id?C.green:"transparent",
+            color:mode===m.id?C.bg:C.t2,
+            border:"none",borderRadius:6,padding:"4px 14px",
+            fontSize:11,fontWeight:700,fontFamily:F.b,
+            letterSpacing:"0.04em",textTransform:"uppercase",cursor:"pointer",
+          }}>{m.label}</button>
+        ))}
       </div>
     </div>
+
+    {mode==="tools" ? <Tools/> : (
 
     <div style={{display:"flex",height:"calc(100vh - 49px)"}}>
       {/* LEFT: Template Picker */}
@@ -657,5 +672,7 @@ export default function App(){
         </div>
       </div>
     </div>
+
+    )}
   </div>;
 }
