@@ -52,12 +52,13 @@ const args = process.argv.slice(2);
 const query = args.find((a) => !a.startsWith("--"));
 const maxResults = numFlag("--max") ?? 5;
 const padding = numFlag("--padding") ?? 3;
-const outCsv = getFlag("--out") ?? "inputs/yt-candidates.csv";
 
 if (!query) {
   console.error('Usage: node scripts/broll-youtube.mjs "<query>" [--max N] [--padding sec] [--out path.csv]');
   process.exit(1);
 }
+
+const outCsv = getFlag("--out") ?? `inputs/yt-${slugify(query)}-${stamp()}.csv`;
 
 // ── 1. YouTube search ─────────────────────────────────────────────────────────
 
@@ -231,6 +232,12 @@ function fmtTime(sec) {
 
 function slugify(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "yt";
+}
+
+function stamp() {
+  const d = new Date();
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
 }
 
 function csvEscape(s) {
