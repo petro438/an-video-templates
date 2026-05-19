@@ -5,8 +5,8 @@ import { Player } from "@remotion/player";
 import TEAMS from "../src/lib/teams.json";
 import Tools from "./Tools.jsx";
 import {
-  OddsCard, StatComparison, BigNumber, Timeline, QuoteCard,
-  StandingsTable, Scoreboard, ProbabilityViz, PhotoStat, Explainer,
+  OddsCard, StatComparison, BigNumber, BigNumberAN, Timeline, QuoteCard,
+  StandingsTable, Scoreboard, ScoreboardAN, ProbabilityViz, PhotoStat, Explainer,
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
   SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
   Background, OldNewspaper,
@@ -332,6 +332,8 @@ const COMPS = {
   Comparable, LowerThird, HeatMap, ScatterPlot, FlexTable,
   SeasonSchedule, GameFlash, ListScanner, DotStrip, RetroTV,
   Background, OldNewspaper,
+  "BigNumber-AN": BigNumberAN,
+  "Scoreboard-AN": ScoreboardAN,
 };
 
 class InnerErrorBoundary extends React.Component {

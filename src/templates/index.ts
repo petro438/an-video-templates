@@ -7,10 +7,12 @@
 export { OddsCard, schema as OddsCardSchema } from "./OddsCard";
 export { StatComparison, schema as StatComparisonSchema } from "./StatComparison";
 export { BigNumber, schema as BigNumberSchema } from "./BigNumber";
+export { BigNumberAN } from "./BigNumber-AN";
 export { Timeline, schema as TimelineSchema } from "./Timeline";
 export { QuoteCard, schema as QuoteCardSchema } from "./QuoteCard";
 export { StandingsTable, schema as StandingsTableSchema } from "./StandingsTable";
 export { Scoreboard, schema as ScoreboardSchema } from "./Scoreboard";
+export { ScoreboardAN } from "./Scoreboard-AN";
 export { ProbabilityViz, schema as ProbabilityVizSchema } from "./ProbabilityViz";
 export { PhotoStat, schema as PhotoStatSchema } from "./PhotoStat";
 export { Explainer, schema as ExplainerSchema } from "./Explainer";
