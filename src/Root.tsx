@@ -3,10 +3,12 @@ import { Composition } from "remotion";
 import { OddsCard } from "./templates/OddsCard";
 import { StatComparison } from "./templates/StatComparison";
 import { BigNumber } from "./templates/BigNumber";
+import { BigNumberAN } from "./templates/BigNumber-AN";
 import { Timeline } from "./templates/Timeline";
 import { QuoteCard } from "./templates/QuoteCard";
 import { StandingsTable } from "./templates/StandingsTable";
 import { Scoreboard } from "./templates/Scoreboard";
+import { ScoreboardAN } from "./templates/Scoreboard-AN";
 import { ProbabilityViz } from "./templates/ProbabilityViz";
 import { PhotoStat } from "./templates/PhotoStat";
 import { Explainer } from "./templates/Explainer";
@@ -39,6 +41,7 @@ export const RemotionRoot: React.FC = () => (
     {/* T3 */}
     <Composition id="BigNumber" component={rc(BigNumber)} durationInFrames={150} {...C} defaultProps={d.miracleBigNumber1000} />
     <Composition id="BigNumber-Estimate" component={rc(BigNumber)} durationInFrames={150} {...C} defaultProps={d.miracleBigNumberEstimate} />
+    <Composition id="BigNumber-AN" component={rc(BigNumberAN)} durationInFrames={150} {...C} defaultProps={d.miracleBigNumber1000} />
     {/* T4 */}
     <Composition id="Timeline" component={rc(Timeline)} durationInFrames={210} {...C} defaultProps={d.miracleTimeline} />
     {/* T5 */}
@@ -47,6 +50,7 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="StandingsTable" component={rc(StandingsTable)} durationInFrames={180} {...C} defaultProps={d.miracleStandings} />
     {/* T7 */}
     <Composition id="Scoreboard" component={rc(Scoreboard)} durationInFrames={150} {...C} defaultProps={d.miracleScoreFinal} />
+    <Composition id="Scoreboard-AN" component={rc(ScoreboardAN)} durationInFrames={150} {...C} defaultProps={d.miracleScoreFinal} />
     {/* T8 */}
     <Composition id="ProbabilityViz" component={rc(ProbabilityViz)} durationInFrames={180} {...C} defaultProps={d.miracleProbDonut} />
     <Composition id="ProbabilityViz-Grid" component={rc(ProbabilityViz)} durationInFrames={180} {...C} defaultProps={d.miracleProbGrid} />
