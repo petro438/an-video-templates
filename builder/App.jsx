@@ -13,18 +13,40 @@ import {
 } from "@templates/index";
 
 // ═══════════════════════════════════════════════
-// DESIGN TOKENS
+// DESIGN TOKENS — maps to Action Network design system in tokens.css
 // ═══════════════════════════════════════════════
 const C = {
-  bg: "#0D0D0D", surface: "#161616", s2: "#1E1E1E", s3: "#282828",
-  card: "#1A1A1A", green: "#00C358", red: "#E5393B", orange: "#FF8C00",
-  gold: "#FFD600", blue: "#2D6CDF", white: "#FFF", t1: "#FFF",
-  t2: "#A0A0A0", t3: "#666", t4: "#3A3A3A", brd: "#262626", brdL: "#333",
+  // Backgrounds
+  bg: "var(--surface-background)",
+  surface: "var(--surface-foreground)",
+  s2: "var(--surface-foreground)",
+  s3: "var(--surface-ui-element)",
+  card: "var(--surface-elevated-foreground)",
+  // Text
+  white: "var(--text-icons-primary)",
+  t1: "var(--text-icons-primary)",
+  t2: "var(--text-icons-secondary)",
+  t3: "var(--text-icons-tertiary)",
+  t4: "var(--dividers-border)",
+  // Borders
+  brd: "var(--dividers-border)",
+  brdL: "var(--dividers-border)",
+  // Accents
+  green: "var(--buttons-primary-green)",
+  red: "var(--text-icons-red)",
+  orange: "var(--surface-labs)",
+  gold: "var(--surface-yellow)",
+  blue: "var(--buttons-primary-blue)",
+  // Tinted backgrounds (use in place of `C.color + "10/15/30"`)
+  greenTint: "var(--labels-green-background)",
+  redTint: "var(--labels-red-background)",
+  // Contrast text for filled accent buttons
+  onAccent: "var(--text-icons-always-white)",
 };
 const F = {
-  d: "'Barlow Condensed','Arial Narrow',sans-serif",
-  s: "'Bebas Neue','Impact',sans-serif",
-  b: "'Barlow','Helvetica Neue',sans-serif",
+  d: "'Mona Sans','Barlow',sans-serif",
+  s: "'Mona Sans','Barlow',sans-serif",
+  b: "'Mona Sans','Barlow',sans-serif",
   m: "'IBM Plex Mono','SF Mono',monospace",
 };
 
@@ -440,7 +462,7 @@ function RenderPanel({ sel, props, dur }) {
         disabled={serverOk===false || job?.state==="queued" || job?.state==="rendering"}
         style={{
           background: job?.state==="rendering"?C.s3:C.green,
-          color: C.bg, border:"none", borderRadius:8,
+          color: C.onAccent, border:"none", borderRadius:8,
           padding:"12px 32px", fontSize:14, fontWeight:700,
           fontFamily:F.d, letterSpacing:"0.06em", textTransform:"uppercase",
           cursor: (serverOk===false||job?.state==="queued"||job?.state==="rendering")?"not-allowed":"pointer",
@@ -465,14 +487,14 @@ function RenderPanel({ sel, props, dur }) {
             <div>
               <div style={{fontSize:11,color:C.t3,marginBottom:4,fontFamily:F.m}}>Output file:</div>
               <div style={{fontSize:12,color:C.green,fontFamily:F.m,wordBreak:"break-all",
-                background:C.green+"10",padding:"8px 12px",borderRadius:6,borderLeft:`3px solid ${C.green}`}}>
+                background:C.greenTint,padding:"8px 12px",borderRadius:6,borderLeft:`3px solid ${C.green}`}}>
                 {job.outputPath}
               </div>
             </div>
           )}
 
           {job.error && (
-            <div style={{fontSize:12,color:C.red,fontFamily:F.m,background:C.red+"10",
+            <div style={{fontSize:12,color:C.red,fontFamily:F.m,background:C.redTint,
               padding:"8px 12px",borderRadius:6,borderLeft:`3px solid ${C.red}`,marginTop:8}}>
               {job.error}
             </div>
@@ -506,6 +528,11 @@ function RenderPanel({ sel, props, dur }) {
 // ═══════════════════════════════════════════════
 export default function App(){
   const [mode,setMode]=useState("templates"); // templates | tools
+  const [theme,setTheme]=useState(()=>document.documentElement.getAttribute("data-theme")||"light");
+  useEffect(()=>{
+    document.documentElement.setAttribute("data-theme",theme);
+    localStorage.setItem("an-builder-theme",theme);
+  },[theme]);
   const [sel,setSel]=useState("OddsCard");
   const schema=S.find(s=>s.id===sel);
   const [props,setProps]=useState(()=>mkDef(schema));
@@ -538,16 +565,24 @@ export default function App(){
         <span style={{color:C.green,fontSize:12}}>●</span>
         <span style={{fontSize:13,color:C.t3,fontWeight:500}}>{mode==="templates"?"Template Builder":"Tools"}</span>
       </div>
-      <div style={{display:"flex",gap:4,background:C.s2,border:`1px solid ${C.brd}`,borderRadius:8,padding:3}}>
-        {[{id:"templates",label:"Templates"},{id:"tools",label:"Tools"}].map(m=>(
-          <button key={m.id} onClick={()=>setMode(m.id)} style={{
-            background:mode===m.id?C.green:"transparent",
-            color:mode===m.id?C.bg:C.t2,
-            border:"none",borderRadius:6,padding:"4px 14px",
-            fontSize:11,fontWeight:700,fontFamily:F.b,
-            letterSpacing:"0.04em",textTransform:"uppercase",cursor:"pointer",
-          }}>{m.label}</button>
-        ))}
+      <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <button onClick={()=>setTheme(theme==="light"?"dark":"light")}
+          title={theme==="light"?"Switch to dark mode":"Switch to light mode"}
+          style={{background:"transparent",border:`1px solid ${C.brd}`,borderRadius:6,padding:"4px 10px",
+            color:C.t2,cursor:"pointer",fontSize:13,fontFamily:F.b,lineHeight:1}}>
+          {theme==="light"?"☾":"☀"}
+        </button>
+        <div style={{display:"flex",gap:4,background:C.s2,border:`1px solid ${C.brd}`,borderRadius:8,padding:3}}>
+          {[{id:"templates",label:"Templates"},{id:"tools",label:"Tools"}].map(m=>(
+            <button key={m.id} onClick={()=>setMode(m.id)} style={{
+              background:mode===m.id?C.green:"transparent",
+              color:mode===m.id?C.onAccent:C.t2,
+              border:"none",borderRadius:6,padding:"4px 14px",
+              fontSize:11,fontWeight:700,fontFamily:F.b,
+              letterSpacing:"0.04em",textTransform:"uppercase",cursor:"pointer",
+            }}>{m.label}</button>
+          ))}
+        </div>
       </div>
     </div>
 
@@ -557,7 +592,7 @@ export default function App(){
       {/* LEFT: Template Picker */}
       <div style={{width:220,borderRight:`1px solid ${C.brd}`,padding:"12px 8px",overflowY:"auto",flexShrink:0}}>
         <div style={{fontSize:10,fontWeight:700,color:C.t3,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:10,padding:"0 8px"}}>Templates</div>
-        {S.map(s=><div key={s.id} onClick={()=>setSel(s.id)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderRadius:8,cursor:"pointer",marginBottom:1,background:sel===s.id?C.green+"15":"transparent",border:sel===s.id?`1px solid ${C.green}30`:"1px solid transparent"}}>
+        {S.map(s=><div key={s.id} onClick={()=>setSel(s.id)} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 10px",borderRadius:8,cursor:"pointer",marginBottom:1,background:sel===s.id?C.greenTint:"transparent",border:sel===s.id?`1px solid ${C.green}`:"1px solid transparent"}}>
           <span style={{fontSize:16}}>{s.icon}</span>
           <div><div style={{fontSize:12,fontWeight:sel===s.id?700:500,color:sel===s.id?C.white:C.t2}}>{s.name}</div></div>
         </div>)}
@@ -657,7 +692,7 @@ export default function App(){
               <button onClick={()=>copy(json)} style={{...BS,background:copied?C.green:C.s3}}>{copied?"Copied!":"Copy"}</button>
             </div>
             <pre style={{background:C.surface,borderRadius:10,padding:16,fontSize:12,color:C.t2,overflow:"auto",margin:0,fontFamily:F.m,lineHeight:1.6,border:`1px solid ${C.brd}`,whiteSpace:"pre-wrap",wordBreak:"break-all",maxHeight:500}}>{json}</pre>
-            <div style={{marginTop:10,padding:10,background:C.green+"10",borderRadius:8,border:`1px solid ${C.green}30`,fontSize:11,color:C.t2,lineHeight:1.5}}>Use with <code style={{background:C.s3,padding:"2px 6px",borderRadius:4,fontSize:10,fontFamily:F.m}}>--props</code> flag or save as a blueprint file.</div>
+            <div style={{marginTop:10,padding:10,background:C.greenTint,borderRadius:8,border:`1px solid ${C.green}`,fontSize:11,color:C.t2,lineHeight:1.5}}>Use with <code style={{background:C.s3,padding:"2px 6px",borderRadius:4,fontSize:10,fontFamily:F.m}}>--props</code> flag or save as a blueprint file.</div>
           </div>}
 
           {panel==="cmd"&&<div>
@@ -666,7 +701,7 @@ export default function App(){
               <button onClick={()=>copy(cmd)} style={{...BS,background:copied?C.green:C.s3}}>{copied?"Copied!":"Copy"}</button>
             </div>
             <pre style={{background:C.surface,borderRadius:10,padding:16,fontSize:11,color:C.t2,overflow:"auto",margin:0,fontFamily:F.m,lineHeight:1.8,border:`1px solid ${C.brd}`,whiteSpace:"pre-wrap",wordBreak:"break-all"}}>{cmd}</pre>
-            <div style={{marginTop:10,padding:10,background:C.green+"10",borderRadius:8,border:`1px solid ${C.green}30`,fontSize:11,color:C.t2,lineHeight:1.5}}>Run from your <code style={{background:C.s3,padding:"2px 6px",borderRadius:4,fontSize:10,fontFamily:F.m}}>an-video-templates/</code> directory.</div>
+            <div style={{marginTop:10,padding:10,background:C.greenTint,borderRadius:8,border:`1px solid ${C.green}`,fontSize:11,color:C.t2,lineHeight:1.5}}>Run from your <code style={{background:C.s3,padding:"2px 6px",borderRadius:4,fontSize:10,fontFamily:F.m}}>an-video-templates/</code> directory.</div>
           </div>}
 
         </div>

@@ -1,0 +1,172 @@
+/* Action Network Design Tokens */
+/* Auto-generated from Figma library export */
+
+:root {
+  /* Spacing */
+  --space-0: 0px;
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-32: 32px;
+  --space-36: 36px;
+  --space-40: 40px;
+  --space-44: 44px;
+  --space-48: 48px;
+  --space-52: 52px;
+  --space-56: 56px;
+  --space-60: 60px;
+  --space-64: 64px;
+  --space-68: 68px;
+  --space-72: 72px;
+  --space-80: 80px;
+  --space-88: 88px;
+  --space-96: 96px;
+  --space-112: 112px;
+  --space-128: 128px;
+  --space-144: 144px;
+  --space-160: 160px;
+  --space-176: 176px;
+
+  /* Border radius */
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-24: 24px;
+  --radius-full: 9999px;
+}
+
+/* Light mode (default) */
+:root, [data-theme='light'] {
+  --surface-background: #ebecf0;
+  --surface-foreground: #f7f8fd;
+  --surface-elevated-foreground: #f7f8fd;
+  --surface-ui-element: #ebecf0;
+  --surface-ui-element-alpha: rgba(164, 164, 170, 0.16);
+  --surface-ui-element-light: #eeeff4;
+  --surface-ui-element-light-alpha: rgba(164, 164, 170, 0.08);
+  --surface-inverted: #22222b;
+  --surface-brand: #00c358;
+  --surface-pro: #0079f0;
+  --surface-labs: #ea5f25;
+  --surface-red: #f32535;
+  --surface-yellow: #f2db0d;
+
+  --text-icons-primary: #1d1d25;
+  --text-icons-secondary: #818188;
+  --text-icons-tertiary: #a4a4aa;
+  --text-icons-interactive: #0079f0;
+  --text-icons-green: #009c46;
+  --text-icons-red: #f32535;
+  --text-icons-inverted: #f7f8fd;
+  --text-icons-always-white: #f7f8fd;
+  --text-icons-always-black: #1d1d25;
+  --text-icons-always-white-80: rgba(247, 248, 253, 0.8);
+
+  --dividers-border: #dedfe4;
+
+  --buttons-default: #ebecf0;
+  --buttons-default-hover: #dedfe4;
+  --buttons-default-alpha: rgba(164, 164, 170, 0.16);
+  --buttons-default-alpha-hover: rgba(164, 164, 170, 0.3);
+  --buttons-primary-green: #00c358;
+  --buttons-primary-green-hover: #009c46;
+  --buttons-primary-blue: #0079f0;
+  --buttons-primary-blue-hover: #0159b3;
+
+  --labels-green-background: rgba(0, 195, 88, 0.08);
+  --labels-green-text: #009c46;
+  --labels-blue-background: rgba(0, 121, 240, 0.08);
+  --labels-blue-text: #0159b3;
+  --labels-red-background: rgba(243, 37, 53, 0.08);
+  --labels-red-text: #f32535;
+  --labels-orange-background: rgba(234, 95, 37, 0.08);
+  --labels-orange-text: #c43f08;
+  --labels-yellow-text: #99720c;
+  --labels-yellow-background: rgba(242, 219, 13, 0.14);
+
+  --ratings-great: #3bad62;
+  --ratings-good: #96d26b;
+  --ratings-fair: #fcd35a;
+  --ratings-poor: #fc7a4a;
+  --ratings-bad: #f2250d;
+
+  --markets-props: #36c2b3;
+  --markets-spread: #60a5fa;
+  --markets-total: #ff9500;
+  --markets-moneyline: #a56db2;
+
+  --shadows-raised-1: 0px 2px 4px 0px rgba(0, 0, 0, 0.14), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+  --shadows-raised-2: 0px 4px 8px 0px rgba(0, 0, 0, 0.14), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+  --shadows-overlay: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode */
+[data-theme='dark'] {
+  --surface-background: #17171c;
+  --surface-foreground: #22222b;
+  --surface-elevated-foreground: #2c2c36;
+  --surface-ui-element: #32323b;
+  --surface-ui-element-alpha: rgba(140, 140, 148, 0.16);
+  --surface-ui-element-light: #33333c;
+  --surface-ui-element-light-alpha: rgba(140, 140, 148, 0.08);
+  --surface-inverted: #f7f8fd;
+  --surface-brand: #00c358;
+  --surface-pro: #0079f0;
+  --surface-labs: #ea5f25;
+  --surface-red: #f32535;
+  --surface-yellow: #f2db0d;
+
+  --text-icons-primary: #f7f8fd;
+  --text-icons-secondary: #b7b8bd;
+  --text-icons-tertiary: #8c8c94;
+  --text-icons-interactive: #8ac5ff;
+  --text-icons-green: #0ce970;
+  --text-icons-red: #ff4d5a;
+  --text-icons-inverted: #1d1d25;
+  --text-icons-always-white: #f7f8fd;
+  --text-icons-always-black: #1d1d25;
+  --text-icons-always-white-80: rgba(247, 248, 253, 0.8);
+
+  --dividers-border: #42424b;
+
+  --buttons-default: #32323b;
+  --buttons-default-hover: #42424b;
+  --buttons-default-alpha: rgba(140, 140, 148, 0.16);
+  --buttons-default-alpha-hover: rgba(140, 140, 148, 0.3);
+  --buttons-primary-green: #00c358;
+  --buttons-primary-green-hover: #0ce970;
+  --buttons-primary-blue: #0079f0;
+  --buttons-primary-blue-hover: #8ac5ff;
+
+  --labels-green-background: rgba(0, 195, 88, 0.12);
+  --labels-green-text: #0ce970;
+  --labels-blue-background: rgba(0, 121, 240, 0.18);
+  --labels-blue-text: #8ac5ff;
+  --labels-red-background: rgba(243, 37, 53, 0.14);
+  --labels-red-text: #ff4d5a;
+  --labels-orange-background: rgba(234, 95, 37, 0.14);
+  --labels-orange-text: #fa7c47;
+  --labels-yellow-text: #f5e23d;
+  --labels-yellow-background: rgba(242, 219, 13, 0.2);
+
+  --ratings-great: #3bad62;
+  --ratings-good: #96d26b;
+  --ratings-fair: #fcd35a;
+  --ratings-poor: #fc7a4a;
+  --ratings-bad: #f2250d;
+
+  --markets-props: #36c2b3;
+  --markets-spread: #60a5fa;
+  --markets-total: #ff9500;
+  --markets-moneyline: #a56db2;
+
+  --shadows-raised-1: 0px 2px 4px 0px rgba(0, 0, 0, 0.48), 0px 0px 2px 0px rgba(0, 0, 0, 0.32);
+  --shadows-raised-2: 0px 4px 8px 0px rgba(0, 0, 0, 0.48), 0px 0px 2px 0px rgba(0, 0, 0, 0.32);
+  --shadows-overlay: 0px 8px 12px 6px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.4);
+}

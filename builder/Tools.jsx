@@ -1,19 +1,41 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const C = {
-  bg: "#0D0D0D", surface: "#161616", s2: "#1E1E1E", s3: "#282828",
-  card: "#1A1A1A", green: "#00C358", red: "#E5393B", orange: "#FF8C00",
-  gold: "#FFD600", blue: "#2D6CDF", white: "#FFF", t1: "#FFF",
-  t2: "#A0A0A0", t3: "#666", t4: "#3A3A3A", brd: "#262626", brdL: "#333",
+  // Backgrounds
+  bg: "var(--surface-background)",
+  surface: "var(--surface-foreground)",
+  s2: "var(--surface-foreground)",
+  s3: "var(--surface-ui-element)",
+  card: "var(--surface-elevated-foreground)",
+  // Text
+  white: "var(--text-icons-primary)",
+  t1: "var(--text-icons-primary)",
+  t2: "var(--text-icons-secondary)",
+  t3: "var(--text-icons-tertiary)",
+  t4: "var(--dividers-border)",
+  // Borders
+  brd: "var(--dividers-border)",
+  brdL: "var(--dividers-border)",
+  // Accents
+  green: "var(--buttons-primary-green)",
+  red: "var(--text-icons-red)",
+  orange: "var(--surface-labs)",
+  gold: "var(--surface-yellow)",
+  blue: "var(--buttons-primary-blue)",
+  // Tinted backgrounds (use these in place of `C.color + "10/15/30"`)
+  greenTint: "var(--labels-green-background)",
+  redTint: "var(--labels-red-background)",
+  // Contrast text for filled accent buttons
+  onAccent: "var(--text-icons-always-white)",
 };
 const F = {
-  d: "'Barlow Condensed','Arial Narrow',sans-serif",
-  s: "'Bebas Neue','Impact',sans-serif",
-  b: "'Barlow','Helvetica Neue',sans-serif",
+  d: "'Mona Sans','Barlow',sans-serif",
+  s: "'Mona Sans','Barlow',sans-serif",
+  b: "'Mona Sans','Barlow',sans-serif",
   m: "'IBM Plex Mono','SF Mono',monospace",
 };
-const IS = { background: C.s2, border: `1px solid ${C.brd}`, borderRadius: 8, padding: "9px 12px", fontSize: 13, color: C.white, width: "100%", fontFamily: F.b, outline: "none", boxSizing: "border-box" };
-const BS = { background: C.s3, border: `1px solid ${C.brd}`, borderRadius: 6, padding: "8px 16px", color: C.white, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: F.b };
+const IS = { background: C.s2, border: `1px solid ${C.brd}`, borderRadius: 8, padding: "9px 12px", fontSize: 13, color: C.t1, width: "100%", fontFamily: F.b, outline: "none", boxSizing: "border-box" };
+const BS = { background: C.s3, border: `1px solid ${C.brd}`, borderRadius: 6, padding: "8px 16px", color: C.t1, cursor: "pointer", fontSize: 12, fontWeight: 600, fontFamily: F.b };
 const SERVER = "http://localhost:3100";
 
 export default function Tools() {
@@ -164,7 +186,7 @@ function PexelsTool({ disabled }) {
           <option value="square">square</option>
         </select>
         <button onClick={search} disabled={disabled || loading || !query.trim()}
-          style={{ ...BS, background: C.green, color: C.bg, opacity: (disabled || loading || !query.trim()) ? 0.5 : 1, padding: "8px 24px", whiteSpace: "nowrap" }}>
+          style={{ ...BS, background: C.green, color: C.onAccent, opacity: (disabled || loading || !query.trim()) ? 0.5 : 1, padding: "8px 24px", whiteSpace: "nowrap" }}>
           {loading ? "Searching…" : (meta && lastSearchRef.current.query === query && lastSearchRef.current.orientation === orientation) ? "More results" : "Search"}
         </button>
       </div>
@@ -194,7 +216,7 @@ function PexelsTool({ disabled }) {
                 </a>
                 <div style={{ padding: "8px 10px", display: "flex", flexDirection: "column", gap: 6 }}>
                   <div style={{ fontSize: 11, color: C.t2, fontFamily: F.m }}>{v.width}×{v.height} · by {v.user.name}</div>
-                  <button onClick={() => download(v)} disabled={dl === "downloading"} style={{ ...BS, background: isDone ? C.green : isErr ? C.red : C.s3, color: isDone ? C.bg : C.white, fontSize: 11, padding: "5px 10px" }}>
+                  <button onClick={() => download(v)} disabled={dl === "downloading"} style={{ ...BS, background: isDone ? C.green : isErr ? C.red : C.s3, color: (isDone || isErr) ? C.onAccent : C.t1, fontSize: 11, padding: "5px 10px" }}>
                     {dl === "downloading" ? "Downloading…" : isDone ? "✓ Downloaded" : isErr ? `Failed` : "Download"}
                   </button>
                   {isDone && <div style={{ fontSize: 10, fontFamily: F.m, color: C.t3, wordBreak: "break-all" }}>{dl}</div>}
@@ -261,8 +283,8 @@ function BlueprintTool({ disabled }) {
   return (
     <div>
       <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
-        <button onClick={() => setMode("text")} style={{ ...BS, background: mode === "text" ? C.green : C.s3, color: mode === "text" ? C.bg : C.white }}>Paste text</button>
-        <button onClick={() => setMode("url")} style={{ ...BS, background: mode === "url" ? C.green : C.s3, color: mode === "url" ? C.bg : C.white }}>From URL</button>
+        <button onClick={() => setMode("text")} style={{ ...BS, background: mode === "text" ? C.green : C.s3, color: mode === "text" ? C.onAccent : C.t1 }}>Paste text</button>
+        <button onClick={() => setMode("url")} style={{ ...BS, background: mode === "url" ? C.green : C.s3, color: mode === "url" ? C.onAccent : C.t1 }}>From URL</button>
       </div>
 
       {mode === "text" ? (
@@ -282,7 +304,7 @@ function BlueprintTool({ disabled }) {
       )}
 
       <button onClick={generate} disabled={disabled || running || !ready}
-        style={{ ...BS, marginTop: 12, background: C.green, color: C.bg, padding: "10px 28px", opacity: (disabled || running || !ready) ? 0.5 : 1 }}>
+        style={{ ...BS, marginTop: 12, background: C.green, color: C.onAccent, padding: "10px 28px", opacity: (disabled || running || !ready) ? 0.5 : 1 }}>
         {running ? "Generating…" : "Generate Blueprint"}
       </button>
 
@@ -295,7 +317,7 @@ function BlueprintTool({ disabled }) {
             </div>
           </div>
           {job.outputPath && job.state === "done" && (
-            <div style={{ fontSize: 12, color: C.green, fontFamily: F.m, wordBreak: "break-all", padding: "6px 10px", background: C.green + "10", borderLeft: `3px solid ${C.green}`, borderRadius: 4, marginBottom: 8 }}>
+            <div style={{ fontSize: 12, color: C.green, fontFamily: F.m, wordBreak: "break-all", padding: "6px 10px", background: C.greenTint, borderLeft: `3px solid ${C.green}`, borderRadius: 4, marginBottom: 8 }}>
               {job.outputPath}
             </div>
           )}
